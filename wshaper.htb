@@ -1,0 +1,279 @@
+#!/bin/sh
+#
+# Seminal release by Bert Hubert <ahu@ds9a.nl>
+# Copyright 2002, licensed under the GPL
+# Originally part of the Linux Advanced Routing & Shaping HOWTO
+#
+# Modified version by Robert Koch (aka akbor) published in October 2007
+# found at http://wiki.wl500g.info/index.php/PackageWondershaper
+#
+# Some additions on June 1st 2008 by Jean-Marc Liotier <jm@liotier.org>
+# cf. http://serendipity.ruwenzori.net/index.php/2008/06/01/modified-wondershaper-for-better-voip-qos
+
+
+##
+## Det var så mye krufft i gamle wshaperhmtb at jeg heller kopierte inn en u-endret utgave fra
+## <http://www.ruwenzori.net/code/wondershaper/wondershaper.jml> (som er basert på Debian sin fork
+## av scriptet, med ekstra regler for å håndtere VoIP trafikk.
+##
+## -- sjn, 2011-09-17
+
+
+# Example integration in Debian's /etc/network/interfaces
+#
+## auto eth1
+## iface eth1 inet dhcp
+## up /usr/local/bin/wondershaper eth1 17408 1187
+#
+# where usage is 'wondershaper device downlink_rate uplink_rate'
+# with values expressed in Kilobits per second
+
+# Nominal values from modem:
+# Båndbredde (Opp/Ned) [kbps/kbps]:	1.468 / 19.240
+# new count (2013-01-12): 1.212 / 19.139
+
+DOWNLINK=16000
+UPLINK=1000
+
+#DEV=eth0
+DEV=$1
+if [ -z "$DEV" ]
+then
+   DEV=eth0
+fi
+
+
+[ ! -z "$1" ] && DEV=$1
+[ ! -z "$2" ] && DOWNLINK=$2
+[ ! -z "$3" ] && UPLINK=$3
+
+# "fair" traffic queue (better than bulk)
+LOWPRIOHOSTSRC=""
+LOWPRIOHOSTDST=""
+LOWPRIOPORTSRC="587"
+LOWPRIOPORTDST="587"
+
+# hi prio OUT traffic
+MEDIUMPRIOPORTSRC="80"
+MEDIUMPRIOPORTDST="80 443 143 993 6667 6668 6669 7000 6697"
+
+# we like SSH HTTPS IRC DNS IMAP
+HIGHPRIOPORTSRC="22 53 1194"
+HIGHPRIOPORTDST="$HIGHPRIOPORTSRC"
+
+# realtime shit
+# 2427 mgcp
+# 4569 iax
+# 5004 rtp
+# 5060 sip
+# 5061 sip-tls
+# 27015 valve source game engine
+# 27030 valve source game engine
+
+if [ "$1" = "dumpconf" ]
+then
+   echo NOPRIOHOSTSRC
+   echo $NOPRIOHOSTSRC
+   echo NOPRIOHOSTDST
+   echo $NOPRIOHOSTDST
+   echo NOPRIOPORTSRC
+   echo $NOPRIOPORTSRC
+   echo NOPRIOPORTDST
+   echo $NOPRIOPORTDST
+   echo HIGHPRIOPORTSRC
+   echo $HIGHPRIOPORTSRC
+   echo HIGHPRIOPORTDST
+   echo $HIGHPRIOPORTDST
+   exit
+fi
+
+if [ "$2" = "status" ]
+then
+        tc -s qdisc ls dev $DEV
+        tc -s class ls dev $DEV
+        exit
+fi
+
+if [ "$1" = "help" ]
+then
+        echo usage   : wondershaper device downlink_rate uplink_rate
+        echo example : wondershaper eth1 17408 1187
+        echo Values are expressed in Kilobits per second
+# Added custom defaults
+        echo
+        echo Defaults - when not giving any args - are Hausmanias network limits as of 2011-09-17
+        echo
+        echo Set the downlink_rate and uplink_rate to somewhat less than actual capacity.
+        echo You may need to experiment to find the highest values that do not saturate the link.
+        echo
+        echo Low priority netmask and ports, both source and destination, can be set my modifying the relevant values in the script itself.
+        echo 
+        echo status usage : wondershaper device status
+        echo status example : wondershaper eth1 status
+        echo
+        echo configuration dump usage : wondershaper dumpconf
+        exit
+fi
+
+# clean existing down- and uplink qdiscs, hide errors
+tc qdisc del dev $DEV root    2> /dev/null > /dev/null
+tc qdisc del dev $DEV ingress 2> /dev/null > /dev/null
+
+if [ "$1" = "stop" ]
+then
+        exit
+fi
+
+########## uplink ##########
+
+echo "ACHTUNG, new wunder regime"
+#class 1:10 : hi prio
+#class 1:20 : fair
+#class 1:30 : lowest 
+#class 1:40 : bulk <-- default
+
+# install root HTB, point default traffic to bulk
+#tc qdisc add dev $DEV root handle 1: htb default 40
+tc qdisc add dev $DEV stab linklayer adsl overhead 28 root handle 1: htb default 40
+
+
+# shape everything at $UPLINK speed - this prevents huge queues in your
+# DSL modem which destroy latency:
+tc class add dev $DEV parent 1: classid 1:1 htb rate ${UPLINK}kbit \
+   ceil ${UPLINK}kbit burst 6k
+
+# high prio class 1:10 - gets 50 to 90% traffic and highest priority:
+tc class add dev $DEV parent 1:1 classid 1:10 htb \
+   rate $((5*$UPLINK/10))kbit \
+   ceil $((9*$UPLINK/10))kbit burst 6k prio 1
+
+# fair class 1:20 - gets 40 to 70% traffic and lower priority:
+tc class add dev $DEV parent 1:1 classid 1:20 htb \
+   rate $((4*$UPLINK/10))kbit \
+   ceil $((7*$UPLINK/10))kbit burst 6k prio 2
+
+# low priority class 1:30 - gets 10 to 50% traffic and low priority:
+tc class add dev $DEV parent 1:1 classid 1:30 htb \
+   rate $((1*$UPLINK/10))kbit \
+   ceil $((5*$UPLINK/10))kbit burst 6k prio 3
+
+# bulk class lowest priority 
+tc class add dev $DEV parent 1:1 classid 1:40 htb \
+   rate $((1*$UPLINK/30))kbit \
+   ceil $((2*$UPLINK/30))kbit burst 6k prio 4
+
+
+# all get Stochastic Fairness:
+tc qdisc add dev $DEV parent 1:10 handle 10: sfq perturb 10
+tc qdisc add dev $DEV parent 1:20 handle 20: sfq perturb 10
+tc qdisc add dev $DEV parent 1:30 handle 30: sfq perturb 10
+tc qdisc add dev $DEV parent 1:40 handle 40: sfq perturb 10
+
+
+# 'match ip protocol 0x11 0xff' means UDP
+
+U32rootfilter="tc filter add dev $DEV parent 1: protocol ip"
+
+# high priority traffic (by TOS)
+$U32rootfilter prio 1 u32 \
+   match ip tos 0x68 0xff \
+   match ip protocol 0x11 0xff \
+   flowid 1:10
+$U32rootfilter prio 1 u32 \
+   match ip tos 0xb8 0xff \
+   match ip protocol 0x11 0xff \
+   flowid 1:10
+
+# high priority traffic (by source port)
+for port in $HIGHPRIOPORTSRC
+do
+   $U32rootfilter prio 1 u32 \
+      match ip sport $port 0xffff \
+      match ip protocol 0x11 0xff \
+      flowid 1:10
+done
+
+# high priority traffic (by destination port)
+for port in $HIGHPRIOPORTDST
+do
+   $U32rootfilter prio 1 u32 \
+      match ip dport $port 0xffff \
+      flowid 1:10
+#      match ip protocol 0x11 0xff \
+done
+# fair priority traffic (by destination port)
+for port in $MEDIUMPRIOPORTDST
+do
+   $U32rootfilter prio 2 u32 \
+      match ip dport $port 0xffff \
+      flowid 1:20
+done
+
+
+# TOS Minimum Delay (ssh, NOT scp) in 1:10:
+$U32rootfilter prio 1 u32 \
+   match ip tos 0x10 0xff \
+   flowid 1:10
+
+# ICMP (ip protocol 1) in the interactive class 1:10 so we
+# can do measurements & impress our friends:
+$U32rootfilter prio 1 u32 \
+   match ip protocol 1 0xff \
+   flowid 1:10
+
+# To speed up downloads while an upload is going on, put ACK packets in
+# the interactive class:
+$U32rootfilter prio 2 u32 \
+   match ip protocol 6 0xff \
+   match u8 0x05 0x0f at 0 \
+   match u16 0x0000 0xffc0 at 2 \
+   match u8 0x10 0xff at 33 \
+   flowid 1:10
+
+# some traffic however suffers a worse fate
+# we could distinguish between TCP and UDP for those no priority filters, but we don't.
+for port in $LOWPRIOPORTDST
+do
+   $U32rootfilter prio 3 u32 \
+      match ip dport $port 0xffff flowid 1:30
+done
+
+for port in $LOWPRIOPORTSRC
+do
+   $U32rootfilter prio 3 u32 \
+      match ip sport $port 0xffff flowid 1:30
+done
+
+for port in $LOWPRIOHOSTSRC
+do
+   $U32rootfilter prio 3 u32 \
+      match ip src $port flowid 1:30
+done
+
+for port in $LOWPRIOHOSTDST
+do
+   $U32rootfilter prio 3 u32 \
+      match ip dst $port flowid 1:30
+done
+
+# rest is 'non-interactive' ie 'bulk' and ends up in 1:30
+$U32rootfilter prio 4 u32 \
+   match ip dst 0.0.0.0/0 flowid 1:30
+
+########## downlink ##########
+
+# slow downloads down to somewhat less than the real speed  to prevent
+# queuing at our ISP. Tune to see how high you can set it.
+# ISPs tend to have *huge* queues to make sure big downloads are fast
+#
+# attach ingress policer:
+tc qdisc add dev $DEV handle ffff: ingress
+
+# filter *everything* to it (0.0.0.0/0), drop everything that's
+# coming in too fast:
+# wai u do dis??
+#tc filter add dev $DEV parent ffff: protocol ip prio 50 u32 match ip src \
+#   0.0.0.0/0 police rate ${DOWNLINK}kbit burst 10k drop flowid :1
+
+
+

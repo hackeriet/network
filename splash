@@ -1,0 +1,96 @@
+#!/bin/bash
+
+# this script is either called splash from /usr/lib/cgi-bin.
+# as anything else from the web server
+
+# web server should set REMOTE_ADDR
+#
+# 2011-02-06 krav / comotion
+
+iptables=/sbin/iptables
+splash=/var/www/splash.html
+dalist=/var/local/maclist
+
+function flush_conntrack(){
+# stolen and crap, conntrack is also a crap interface to conntrack
+
+(sleep 1 ; sudo /usr/sbin/conntrack -L \
+    |grep $1 \
+    |grep ESTAB \
+    |grep 'dport=80' \
+    |awk \
+        "{ system(\"sudo /usr/sbin/conntrack -D --orig-src $1 --orig-dst \" \
+            substr(\$6,5) \" -p tcp --orig-port-src \" substr(\$7,7) \" \
+            --orig-port-dst 80\"); }"
+) &
+}
+
+
+case $0 in
+	*splash)
+	# If we're a symlink called splash we're called from the iptables init
+	# script and need to initialize the chain with already greeted users
+	
+        # everyone not on the list has not been properly greeted
+	for mac in `cat $dalist`
+	do
+		echo "Permitting $mac..."
+		$iptables -t nat -I PREROUTING -m mac --mac-source $mac -j ACCEPT
+
+	done
+
+	$iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT
+	exit 0
+esac
+# ^ comotion used a case here! his fault!        
+
+# Else, we're a CGI script wooo!!!
+
+fis=($(/usr/sbin/arp $REMOTE_ADDR))
+mac=${fis[8]}
+
+if [ -z "$REMOTE_ADDR" ]
+then
+# HACKERS?! USING MY SCRIPT!??!??
+# `REMOTE_ADDR=10.etc ./velkommen' for testing
+	   echo "..."
+           exit
+fi
+
+cat << EOF
+Content-type: text/html
+Cache-Control: private;
+
+<pre>
+<h1>Welcome to Hausmania!</h1>
+Internet is kindly provided by <a href="http://humla.info">Humla.</a> 
+EOF
+
+if [ -z "$mac" ]; then
+	echo "Failed, no mac!!! CALL Linuxbrigaden! They probably coded the part that went wrong."
+        exit
+elif grep -q $mac $dalist ; then
+  # User is already on the list
+
+	cat << EOF
+Hello, $REMOTE_ADDR, your mac $mac is already on the list! We probably screwed
+up. We'll try and flush your conntrack table again and you'll be fine! 
+<br />
+Have a fortune and then reload the page:
+<i>$(/usr/games/fortune)</i>
+
+EOF
+   flush_conntrack $REMOTE_ADDR
+   exit
+else
+        [ -f $splash ] && cat $splash
+	echo $mac >> $dalist 
+	sudo $iptables -t nat -I PREROUTING -m mac --mac-source $mac -j ACCEPT 2>&1
+fi
+
+
+
+# and in firewall script /etc/init.d/local do default redirect: 
+#iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT -m mac ! --mac-source $mac
+
+
