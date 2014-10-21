@@ -1,0 +1,55 @@
+core:
+1 - uplink   / GB
+2 - kontoret / GB
+3 - humla    / GB
+5 - 40? -
+6 - podium
+11 - uplink 2 
+12 - musikk - radeks rouge 50:e5:49:b4:ea:cd
+23 - ? lasse / GB
+
+trunk- star is 00:00:24:CE:97:25
+ rogue 00:23:69:26:05:13 = 4etasje wlan
+
+note! uplink 2 == 12% packet loss!
+
+L1 - uplink
+L2 - hsw6
+L3 - MC 1
+4 - MC 2 GB
+5 - vegg - no link
+6 - humla scene 2 på kabel 3
+7 - EMPTY vlan 3
+8 - gang 1 - no link
+L9 - "shoo"-switch trunk : 4 etg -> 3etg "experience" 
+L10 - skatehallen - rouge 00:18:39:d3:98:fc
+11 - EMPTY
+12 - EMPTY vlan3
+13 - problem?
+14 - monz
+15 - rateb 
+16 - vegg 3
+17 - EMPTY
+18 - EMPTY
+19 - opp 2 
+20 - EMPTY
+21 - EMPTY
+22 - EMPTY
+23 - EMPTY
+L24 - vlan 1+trunk
+
+hsw6
+1 - UPLINK
+2 - mgmt
+3 - humla bar
+4 - humla opp satan (bar overhead)
+5 - humla scene 1 på kabel
+6 - humla door
+7 - humla proctor wlan AP scene
+12 - mad science lab
+
+shoo - vlan 7, 4.etg
+1 - trunk uplink humla
+3 - etg 3
+22?- 4etasje wlan
+

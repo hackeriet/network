@@ -1,0 +1,316 @@
+#!/bin/bash
+# humla specifics goes here for example. or somewhere else ;-)
+# saloxin sub comotion krav scn
+# set -x
+
+UPLINK=eth0
+
+echo "$0 Hausmania Humla Hackeriet :-)"
+echo "Uplink $UPLINK"
+
+modprobe nf_nat_tftp
+
+iptables -F
+iptables -t mangle -F
+iptables -t nat -F
+
+# wat the fuck
+iptables -P FORWARD DROP
+
+echo 1 > /proc/sys/net/ipv4/ip_forward
+echo 1 > /proc/sys/net/ipv4/conf/all/proxy_arp
+
+modprobe ip_conntrack hashsize=4096
+
+# rpfilter commented out by lasse 2014-10-18. gives the following error:
+# ip6tables: No chain/target/match by that name.
+# anti spoofing.. needs an upgrade to linux 3.3
+#iptables -A PREROUTING -t raw -m rpfilter --invert -j DROP
+#ip6tables -A PREROUTING -t raw -m rpfilter --invert -j DROP
+
+# mofos
+# voxility romania, loads of udp shit trffic
+iptables -A FORWARD -s 93.115.84.198 -j DROP
+iptables -A FORWARD -d 93.115.84.198 -j DROP
+#JOUANNE2000-PC.haus.mania.55551
+
+
+# anti scans
+iptables -A INPUT -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j DROP
+iptables -A INPUT -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG FIN,SYN,RST,PSH,ACK,URG -j DROP
+iptables -A INPUT -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG FIN,PSH,URG -j DROP
+iptables -A INPUT -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG FIN,SYN,RST,ACK,URG -j DROP
+iptables -A INPUT -p tcp -m tcp --tcp-flags SYN,RST SYN,RST -j DROP
+iptables -A INPUT -p tcp -m tcp --tcp-flags FIN,SYN FIN,SYN -j DROP
+iptables -A INPUT -m state --state INVALID -j DROP
+
+# raw anti spoofing
+#iptables -A PREROUTING -t raw -i $UPLINK -s $NET_ETH1 -j DROP
+#iptables -A PREROUTING -t raw -i $UPLINK -s $ROUTED_VIA_ETH1 -j DROP
+#iptables -A PREROUTING -t raw -i eth1 -s $NET_ETH1 -j ACCEPT
+#iptables -A PREROUTING -t raw -i eth1 -s $ROUTED_VIA_ETH1 -j ACCEPT
+#iptables -A PREROUTING -t raw -i eth1 -j DROP
+
+#The IPv6 case is similar if we omit the case of the local link network
+#ip6tables -A PREROUTING -t raw -i $UPLINK -s $NET_ETH1 -j DROP
+#ip6tables -A PREROUTING -t raw -i $UPLINK -s $ROUTED_VIA_ETH1 -j DROP
+#ip6tables -A PREROUTING -t raw -s fe80::/64 -j ACCEPT
+#ip6tables -A PREROUTING -t raw -i eth1 -s $NET_ETH1 -j ACCEPT
+#ip6tables -A PREROUTING -t raw -i eth1 -s $ROUTED_VIA_ETH1 -j ACCEPT
+
+# do not route from/to bogons
+iptables -A FORWARD -d 192.168.0.0/16 -j ULOG --ulog-prefix 'BOGON: ' --ulog-qthreshold 10
+iptables -A FORWARD -d 192.168.0.0/16 -j REJECT
+iptables -A FORWARD -s 192.168.0.0/16 -j ULOG --ulog-prefix 'BOGON: ' --ulog-qthreshold 10
+iptables -A FORWARD -s 192.168.0.0/16 -j REJECT
+iptables -A FORWARD -d 172.16.0.0/16 -j ULOG --ulog-prefix 'BOGON: ' --ulog-qthreshold 10
+iptables -A FORWARD -d 172.16.0.0/16 -j REJECT
+iptables -A FORWARD -s 172.16.0.0/16 -j ULOG --ulog-prefix 'BOGON: ' --ulog-qthreshold 10
+iptables -A FORWARD -s 172.16.0.0/16 -j REJECT
+
+
+# nat and port forwarding
+iptables --table nat --append POSTROUTING --out-interface $UPLINK -j MASQUERADE
+# obs! reconf'ed
+#iptables --table nat --append POSTROUTING -o ppp0 -j MASQUERADE
+
+
+# vestbredden outgoing
+# er denne linken oppe? lkarsten, feb2013.
+# link not up as of 2014-09, kwy
+#iptables --table nat --append POSTROUTING --out-interface eth1.15 -j MASQUERADE
+#iptables --table nat --append POSTROUTING --out-interface eth1.15 -j SNAT --to-source 10.5.0.252
+
+# allow established and related incoming
+iptables -A FORWARD -p all -i eth1.15 -m state --state ESTABLISHED,RELATED -j ACCEPT
+# allow all interfaces to establish new connections out through eth1.15
+iptables -A FORWARD -p all ! -i eth1.15 -o eth1.15 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -p all ! -i eth1.15 -o eth1.15 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+
+# SERVICES on this host
+
+# pxe pixe for fuckssake
+iptables -A INPUT -p udp --dport 69 -j ACCEPT
+iptables -A INPUT -p udp --dport 2049 -j ACCEPT
+iptables -A INPUT -p tcp --dport 2049 -j ACCEPT
+iptables -A INPUT -p tcp --dport 4000:4003 -j ACCEPT
+             
+# SSH
+iptables -A INPUT -p tcp --dport 22 -m state --state NEW -j ACCEPT
+# SSH backup port
+iptables -A INPUT -p tcp --dport 62222 -m state --state NEW -j ACCEPT
+# tor node
+iptables -A INPUT -p tcp --dport 9001 -m state --state NEW -j ACCEPT
+# tor node
+iptables -A INPUT -p tcp --dport 9001 -m state --state NEW -j ACCEPT
+# blame traffic
+iptables -A INPUT -p tcp --dport 8080 -m state --state NEW -j ACCEPT
+# talk on loopback is allowed
+iptables -A INPUT -p udp --dport 517 -i lo -m state --state NEW -j ACCEPT
+# talk outside of loopback, not allowed
+iptables -A INPUT -p udp --dport 517 -m state --state NEW -j DROP
+# 
+# freenet protocol
+iptables -A INPUT -p udp --dport 30768 -j ACCEPT
+iptables -A INPUT -p udp --dport 11371 -j ACCEPT
+
+# MOSH.mit.edu
+iptables -A INPUT -p udp --dport 60000:61000 -m state --state NEW -j ACCEPT
+              
+# victoria's tv
+iptables -A FORWARD -p tcp --dport 64622 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -p tcp --dport 64646 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+# VNC 
+iptables -A FORWARD -p tcp --dport 5901 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -p tcp --dport 5900 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+# mixmaster, humla bar machine
+iptables -A FORWARD -p tcp --dport 5901 -d 10.10.3.67 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -p tcp --dport 5900 -d 10.10.3.67 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -p tcp --dport 6600 -d 10.10.3.67 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+
+#HTTP/HTTPS anyhere
+iptables -A FORWARD -p tcp --dport 8008 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -p tcp --dport 8080 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -p tcp --dport 80 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -p tcp --dport 443 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+
+#DNS/SSH anywhere
+iptables -A FORWARD -p tcp --dport 53 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -p udp --dport 53 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -p tcp --dport 22 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+
+# whos blocking mail!?
+# IMAPS everywhere
+iptables -A FORWARD -p tcp --dport 993 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -p tcp --sport 993 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+# IMAP
+iptables -A FORWARD -p tcp --sport 143 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -p tcp --dport 143 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+# SMTP
+iptables -A FORWARD -p tcp --sport 25 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -p tcp --dport 25 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+# SMTPS
+iptables -A FORWARD -p tcp --sport 465 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -p tcp --dport 465 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+# SMTP
+iptables -A FORWARD -p tcp --sport 2525 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -p tcp --dport 2525 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+# Transmission
+iptables -A FORWARD -p tcp --sport 587 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -p tcp --dport 587 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+
+# Github git protocol
+iptables -A FORWARD -p tcp --dport 9418 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+
+# IRCd
+iptables -A FORWARD -p tcp --dport 6667 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+
+# sshiat
+iptables -A FORWARD -p tcp --dport 62222 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+
+# bitmessage (lasse)
+iptables -A FORWARD -p tcp --dport 8444 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+
+
+# metasploit is one of the good guys
+iptables -A FORWARD -d 10.0.130.101 -j ACCEPT
+iptables -A FORWARD -s 10.0.130.101 -j ACCEPT
+
+# same is wasp. (obsobs, dhcp)
+iptables -A FORWARD -s 10.0.130.97 -j ACCEPT
+iptables -A FORWARD -d 10.0.130.97 -j ACCEPT
+
+# allow established and related incoming
+iptables -A FORWARD -p all -i $UPLINK -m state --state ESTABLISHED,RELATED -j ACCEPT
+#iptables -A FORWARD -p all -i ppp0 -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# allow all interfaces to establish new connections out through $UPLINK
+#iptables -A FORWARD -p all ! -i ppp0 -o ppp0 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+# bang exception eth3 outgoing
+#iptables -A FORWARD -p all ! -i eth3 -o eth3 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+
+# allow eth3 to do anything - humla supernett!
+iptables -A FORWARD -i eth1.3 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -o eth1.3 -m state --state ESTABLISHED,RELATED -j ACCEPT
+# iptables -A FORWARD -i eth1 -o eth1.3 -m state --state  ESTABLISHED,RELATED -j ACCEPT
+
+# allow ftp to podium 
+iptables -A FORWARD -i eth1.6 -p tcp --dport 21 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -o eth1.6 -p tcp --dport 21 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -i eth1.6 -p tcp --dport 20 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -o eth1.6 -p tcp --dport 20 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+
+#allow hacker02 to read munin shit
+iptables -A FORWARD -p tcp --dport 4949 -s 10.10.10.99 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+#iptables -A FORWARD -i eth1 -s 10.10.10.99 -p tcp --dport 4949 -j ACCEPT
+#iptables -A FORWARD -o eth1 -d 10.10.10.99 -p tcp --sport 4949 -j ACCEPT
+
+# drop dhcp requests and answers from crossing interfaces
+iptables -A FORWARD -p udp --dport 68 -j ULOG --ulog-prefix 'DHCP xrossing: '
+iptables -A FORWARD -p udp --dport 67:68 --sport 67:68 -j DROP
+
+# microseft lan tjenester - til internett
+iptables -A FORWARD -o $UPLINK -p tcp --dport 137:138 -j REJECT
+iptables -A FORWARD -o $UPLINK -p udp --dport 137:138 -j REJECT
+#iptables -A FORWARD -o ppp0 -p tcp --dport 137:138 -j REJECT
+#iptables -A FORWARD -o ppp0 -p udp --dport 137:138 -j REJECT
+
+# interne addresser skal ikke krysse eth0
+iptables -A FORWARD -o $UPLINK -d 10.10.0.0/255.255.0.0 -j REJECT
+iptables -A FORWARD -i $UPLINK -s 10.10.0.0/255.255.0.0 -j REJECT
+iptables -A FORWARD -o ppp0 -d 10.10.0.0/255.255.0.0 -j REJECT
+iptables -A FORWARD -i ppp0 -s 10.10.0.0/255.255.0.0 -j REJECT
+
+# vestbredden!
+#iptables -A FORWARD -o eth0 -d 10.5.0.0/255.255.0.0 -j REJECT
+#iptables -A FORWARD -i eth0 -s 10.5.0.0/255.255.0.0 -j REJECT
+
+iptables -A FORWARD -d 10.5.0.0/24 -j ACCEPT
+
+# tillatt trafikk fra og til vulcano
+iptables -A FORWARD -s 10.10.10.86 -j ACCEPT
+iptables -A FORWARD -d 10.10.10.86 -j ACCEPT
+iptables -A FORWARD -s 10.10.3.86 -j ACCEPT
+iptables -A FORWARD -d 10.10.3.86 -j ACCEPT
+# samba!  ports 135 137 138 139 445 and..
+iptables -I INPUT 1 -p udp --dport 3544 -m state --state NEW -s 10.10.3.0/24 -j ACCEPT
+iptables -I INPUT 1 -p udp --dport 3544 -m state --state NEW -s 10.10.10.0/24 -j ACCEPT
+iptables -I INPUT 1 -p udp --dport 3544 -m state --state NEW -s 10.10.7.0/24 -j ACCEPT
+iptables -I INPUT 1 -p tcp --dport 3544 -m state --state NEW -s 10.10.3.0/24 -j ACCEPT
+iptables -I INPUT 1 -p tcp --dport 3544 -m state --state NEW -s 10.10.10.0/24 -j ACCEPT
+iptables -I INPUT 1 -p tcp --dport 3544 -m state --state NEW -s 10.10.7.0/24 -j ACCEPT
+
+
+# TOR
+iptables -I INPUT -p tcp --dport 9050 -m state --state NEW -j ACCEPT
+iptables -I INPUT -p tcp --dport 9001 -m state --state NEW -j ACCEPT
+iptables -I INPUT -p udp --dport 9053 -m state --state NEW -j ACCEPT
+
+# ping for pokker
+iptables -A FORWARD -p icmp -j ACCEPT
+
+# http
+iptables -A FORWARD -p tcp --dport 80 -j ACCEPT
+
+# https
+iptables -A FORWARD -p tcp --dport 443 -j ACCEPT
+
+# allow anything to hsw7
+iptables -A FORWARD -d 10.0.128.0/20 -j ACCEPT
+iptables -A FORWARD -d 10.0.127.0/24 -j ACCEPT
+
+# stygg port
+iptables -A FORWARD -p udp --dport 666 -j DROP
+
+# log the rest - (use "dmesg" to see logs. syslog doesn't catch them)
+iptables -A FORWARD -j ULOG --ulog-prefix "DROP: " --ulog-cprange 50 --ulog-qthreshold 10
+
+# and reject them
+iptables -A FORWARD -p tcp -j REJECT --reject-with tcp-reset
+iptables -A FORWARD -p all -j REJECT
+
+# traffic shaping setup - htb
+# /usr/sbin/wondershaper
+wunder=/usr/local/sbin/wshaper.htb
+if [ -x $wunder ]
+   then
+   echo -n "wunder shaper..."
+   $wunder $UPLINK
+   echo "wunder shaped."
+else
+   echo "no wunder shaper"
+fi
+
+# classify up short http connections
+#iptables -A POSTROUTING -t mangle -p tcp --dport http -m connbytes --connbytes-dir both --connbytes-mode bytes --connbytes 100000 -j CLASSIFY --set-class 1:10
+
+# classify up kontoret
+#iptables -A POSTROUTING -t mangle -o eth0 -p tcp --src 10.10.2.0/24 -j CLASSIFY --set-class 1:10
+
+# port forwarding destination nat
+# iptables -t nat -A PREROUTING -p tcp -i eth0 -d 10.0.0.12 --dport 8888 -j DNAT --to 10.10.10.10
+#iptables -A PREROUTING -t nat -p tcp -d 10.0.0.12 --dport 2222 -m state --state NEW,ESTABLISHED,RELATED -j DNAT --to 10.0.0.4:22
+#
+#iptables -A PREROUTING -t nat -p tcp -d 11.0.0.12 --dport 4242 -m state --state NEW,ESTABLISHED,RELATED -j DNAT --to 10.10.42.201:22
+
+
+# restricting a host to known ports
+# iptables -A FORWARD -i eth1 -s 10.10.10.179 -p tcp --dport ! 80:1024 -j REJECT
+# iptables -A FORWARD -i eth1 -s 10.10.10.179 -p udp --dport ! 80:1000 -j REJECT
+
+# banning a host
+# iptables -A FORWARD -i eth1 -s 10.10.10.179 -p tcp -j REJECT
+# iptables -A FORWARD -i eth1 -s 10.10.10.179 -p udp -j REJECT
+
+# # ukjent .ru host...
+iptables -A FORWARD -d 194.67.68.100 -j REJECT
+
+# welcum page whitelist. 
+# sets up a default-shitlist
+#you won't get splashed if you're on /var/local/maclist
+
+#/usr/local/sbin/splash
+
+
+# default ACCEPT, if u didn't get shitlisted!
+
