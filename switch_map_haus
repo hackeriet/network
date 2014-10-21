@@ -6,7 +6,7 @@ core:
 6 - podium
 11 - uplink 2 
 12 - musikk - radeks rouge 50:e5:49:b4:ea:cd
-23 - ? lasse / GB
+23 - hole-sw (scn) / GB
 
 trunk- star is 00:00:24:CE:97:25
  rogue 00:23:69:26:05:13 = 4etasje wlan
@@ -38,7 +38,7 @@ L10 - skatehallen - rouge 00:18:39:d3:98:fc
 23 - EMPTY
 L24 - vlan 1+trunk
 
-hsw6
+hsw6 / "bord"
 1 - UPLINK
 2 - mgmt
 3 - humla bar
@@ -46,10 +46,18 @@ hsw6
 5 - humla scene 1 på kabel
 6 - humla door
 7 - humla proctor wlan AP scene
-12 - mad science lab
+12 - mad science lab - hsw4
 
 shoo - vlan 7, 4.etg
 1 - trunk uplink humla
 3 - etg 3
 22?- 4etasje wlan
 
+hsw4
+23 - vlan 24
+24 - uplink(1)
+25 - vlan 24
+26 - uplink
+
+hole-sw (scn)
+VLAN 130 / hackeriet-servers
