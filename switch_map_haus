@@ -1,4 +1,20 @@
-core:
+hsw0 10.10.1.100
+================
+
+Extreme Summit S400-24t
+
+Mounted on the wall left of the window in the basement/server room.
+New main core switch for Hausmania.
+
+Port list:
+port 24: h,hsw0<->core
+
+core
+====
+
+Placed on top of the telecom switch in the basement. To be replaced
+by hsw0.
+
 1 - uplink   / GB
 2 - kontoret / GB
 3 - humla    / GB
@@ -39,6 +55,8 @@ L10 - skatehallen - rouge 00:18:39:d3:98:fc
 L24 - vlan 1+trunk
 
 hsw6 / "bord"
+=============
+
 1 - UPLINK
 2 - mgmt
 3 - humla bar
@@ -54,10 +72,12 @@ shoo - vlan 7, 4.etg
 22?- 4etasje wlan
 
 hsw4
+====
 23 - vlan 24
 24 - uplink(1)
 25 - vlan 24
 26 - uplink
 
 hole-sw (scn)
+=============
 VLAN 130 / hackeriet-servers
