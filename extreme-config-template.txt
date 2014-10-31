@@ -1,0 +1,88 @@
+
+create vlan kontor
+configure vlan kontor tag 2
+configure vlan kontor add ports 24 tagged
+enable igmp snooping vlan kontor
+
+create vlan humla
+configure vlan humla tag 3
+configure vlan humla add ports 24 tagged
+enable igmp snooping vlan humla
+
+create vlan vestbredden
+configure vlan vestbredden tag 5
+configure vlan vestbredden add ports 24 tagged
+enable igmp snooping vlan vestbredden
+
+create vlan podium
+configure vlan podium tag 6
+configure vlan podium add ports 24 tagged
+enable igmp snooping vlan podium
+
+create vlan fjerde
+configure vlan fjerde tag 7
+configure vlan fjerde add ports 24 tagged
+enable igmp snooping vlan fjerde
+
+create vlan haus
+configure vlan haus tag 10
+configure vlan haus add ports 24 tagged
+enable igmp snooping vlan haus
+
+create vlan netmanage
+configure vlan netmanage tag 23
+configure vlan netmanage add ports 24 tagged
+enable igmp snooping vlan netmanage
+
+create vlan laugmanage
+configure vlan laugmanage tag 24
+configure vlan laugmanage add ports 24 tagged
+enable igmp snooping vlan laugmanage
+
+create vlan hauswlan
+configure vlan hauswlan tag 25
+configure vlan hauswlan add ports 24 tagged
+enable igmp snooping vlan hauswlan
+
+create vlan isolation
+configure vlan isolation tag 42
+configure vlan isolation add ports 24 tagged
+enable igmp snooping vlan isolation
+
+create vlan skatehallen
+configure vlan skatehallen tag 69
+configure vlan skatehallen add ports 24 tagged
+enable igmp snooping vlan skatehallen
+
+create vlan musikk
+configure vlan musikk tag 88
+configure vlan musikk add ports 24 tagged
+enable igmp snooping vlan musikk
+
+create vlan nettlaug
+configure vlan nettlaug tag 130
+configure vlan nettlaug add ports 24 tagged
+enable igmp snooping vlan nettlaug
+
+
+disable telnet
+enable web
+enable ssh2
+
+# configure account admin  - set pw
+
+configure snmp sysName XXXX
+
+configure vlan Default ipaddress 10.10.1.x/24
+configure iproute add default 10.10.1.1 
+
+
+configure dns-client add 8.8.8.8
+
+# ignore the timezones
+configure timezone name UTC +0
+enable sntp-client
+configure sntp-client primary server pool.ntp.org
+
+enable lldp ports all 
+
