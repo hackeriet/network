@@ -176,6 +176,10 @@ iptables -A FORWARD -p tcp --dport 8444 -m state --state NEW,ESTABLISHED,RELATED
 iptables -A FORWARD -d 10.0.130.101 -j ACCEPT
 iptables -A FORWARD -s 10.0.130.101 -j ACCEPT
 
+# so is blade.
+iptables -A FORWARD -d 10.0.130.100 -j ACCEPT
+iptables -A FORWARD -s 10.0.130.100 -j ACCEPT
+
 # same is wasp. (obsobs, dhcp)
 iptables -A FORWARD -s 10.0.130.97 -j ACCEPT
 iptables -A FORWARD -d 10.0.130.97 -j ACCEPT
