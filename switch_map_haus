@@ -7,29 +7,22 @@ Mounted on the wall left of the window in the basement/server room.
 New main core switch for Hausmania.
 
 Port list:
-port 24: h,hsw0<->core
 
-core
-====
+1 - kontoret / GB / vlan 2
+2 - vestbredden
+X - podium
+X - musikk
+x - 69
+x - 69
+17 - hsw6-humla
+24 - h,hsw0<->uplink
 
-Placed on top of the telecom switch in the basement. To be replaced
-by hsw0.
-
-1 - uplink   / GB
-2 - kontoret / GB
-3 - humla    / GB
-5 - 40? -
-6 - podium
-11 - uplink 2 
-12 - musikk - radeks rouge 50:e5:49:b4:ea:cd
-23 - hole-sw (scn) / GB
-
-trunk 
+rogue 
 =====
-DEPRECATED, replaced by hsw6
 note! uplink 2 == 12% packet loss!
 star is 00:00:24:CE:97:25
 rogue 00:23:69:26:05:13 = 4etasje wlan
+musikk - radeks rouge 50:e5:49:b4:ea:cd
 
 hsw6 / "bord"
 =============
@@ -69,8 +62,8 @@ shoo
 3 - etg 3
 22?- 4etasje wlan
 
-hsw4
-====
+hsw4 madlab
+============
 23 - vlan 24
 24 - uplink(1)
 25 - vlan 24
