@@ -48,6 +48,12 @@ eXtreme
 
 extreme-config-template.txt - how to configure eXtreme switches
 
+Quick tutorial:
+- show which VLAN a port has: show ports 9 vlan info
+- list all vlans on the switch: show vlan
+- set VLAN on a port: configure vlan VLANNAME add ports 9 untagged  (might need to configure vlan OLDVLAN delete ports 9 first.)
+- save config to nvram: "save"
+
 Splash
 ======
 
