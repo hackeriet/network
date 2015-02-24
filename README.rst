@@ -17,19 +17,19 @@ The gateway is configured in the following files:
 Firewall
 --------
 
-`/etc/rc.firewall`
+``/etc/rc.firewall``
 
 Traffic shaping
 ---------------
 
-`/usr/local/sbin/wshaper.htb`
+``/usr/local/sbin/wshaper.htb``
 
 called from the firewall
 
 DHCP and DNS
 ------------
 
-`/etc/dnsmasq.conf`
+``/etc/dnsmasq.conf``
 
 
 Check your work
@@ -49,10 +49,10 @@ eXtreme
 extreme-config-template.txt - how to configure eXtreme switches
 
 Quick tutorial::
- - show which VLAN a port has: `show ports 9 vlan info`
- - list all vlans on the switch: `show vlan`
- - set VLAN on a port: `configure vlan VLANNAME add ports 9 untagged´ (might need to `configure vlan OLDVLAN delete ports 9` first.)
- - save config to nvram: `save`
+ - show which VLAN a port has: ``show ports 9 vlan info``
+ - list all vlans on the switch: ``show vlan``
+ - set VLAN on a port: ``configure vlan VLANNAME add ports 9 untagged`` (might need to ``configure vlan OLDVLAN delete ports 9`` first.)
+ - save config to nvram: ``save``
 
 Splash
 ======
