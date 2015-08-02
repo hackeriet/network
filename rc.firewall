@@ -25,15 +25,12 @@ modprobe ip_conntrack hashsize=4096
 # rpfilter commented out by lasse 2014-10-18. gives the following error:
 # ip6tables: No chain/target/match by that name.
 # anti spoofing.. needs an upgrade to linux 3.3
-#iptables -A PREROUTING -t raw -m rpfilter --invert -j DROP
 #ip6tables -A PREROUTING -t raw -m rpfilter --invert -j DROP
+#iptables -A PREROUTING -t raw -m rpfilter --invert -j DROP
 
-# mofos
 # voxility romania, loads of udp shit trffic
 iptables -A FORWARD -s 93.115.84.198 -j DROP
 iptables -A FORWARD -d 93.115.84.198 -j DROP
-#JOUANNE2000-PC.haus.mania.55551
-
 
 # anti scans
 iptables -A INPUT -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j DROP
@@ -68,16 +65,23 @@ iptables -A FORWARD -d 172.16.0.0/16 -j REJECT
 iptables -A FORWARD -s 172.16.0.0/16 -j ULOG --ulog-prefix 'BOGON: ' --ulog-qthreshold 10
 iptables -A FORWARD -s 172.16.0.0/16 -j REJECT
 
+# SNAT all outgoing from 10.10.3.0/24 to our fibre addresses
+#iptables --table nat --append INPUT --source 10.10.3.0/24 -j SNAT --to-source 185.35.202.241
 
 # nat and port forwarding
 iptables --table nat --append POSTROUTING --out-interface $UPLINK -j MASQUERADE
+#iptables --table nat ! -s 185.35.202.192/26 --append POSTROUTING --out-interface $UPLINK -j MASQUERADE
 # obs! reconf'ed
 #iptables --table nat --append POSTROUTING -o ppp0 -j MASQUERADE
 
+# port forwarding destination nat
+# iptables -t nat -A PREROUTING -p tcp -i eth0 -d 10.0.0.12 --dport 8888 -j DNAT --to 10.10.10.10
+#iptables -A PREROUTING -t nat -p tcp -d 10.0.0.12 --dport 2222 -m state --state NEW,ESTABLISHED,RELATED -j DNAT --to 10.0.0.4:22
+#
+#iptables -A PREROUTING -t nat -p tcp -d 11.0.0.12 --dport 4242 -m state --state NEW,ESTABLISHED,RELATED -j DNAT --to 10.10.42.201:22
 
 # vestbredden outgoing
-# er denne linken oppe? lkarsten, feb2013.
-# link not up as of 2014-09, kwy
+# linken er nede men kabelen eksisterer og kan gjenopplives
 #iptables --table nat --append POSTROUTING --out-interface eth1.15 -j MASQUERADE
 #iptables --table nat --append POSTROUTING --out-interface eth1.15 -j SNAT --to-source 10.5.0.252
 
@@ -171,19 +175,6 @@ iptables -A FORWARD -p tcp --dport 62222 -m state --state NEW,ESTABLISHED,RELATE
 # bitmessage (lasse)
 iptables -A FORWARD -p tcp --dport 8444 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
-
-# metasploit is one of the good guys
-iptables -A FORWARD -d 10.0.130.101 -j ACCEPT
-iptables -A FORWARD -s 10.0.130.101 -j ACCEPT
-
-# so is blade.
-iptables -A FORWARD -d 10.0.130.100 -j ACCEPT
-iptables -A FORWARD -s 10.0.130.100 -j ACCEPT
-
-# same is wasp. (obsobs, dhcp)
-iptables -A FORWARD -s 10.0.130.97 -j ACCEPT
-iptables -A FORWARD -d 10.0.130.97 -j ACCEPT
-
 # allow established and related incoming
 iptables -A FORWARD -p all -i $UPLINK -m state --state ESTABLISHED,RELATED -j ACCEPT
 #iptables -A FORWARD -p all -i ppp0 -m state --state ESTABLISHED,RELATED -j ACCEPT
@@ -203,11 +194,6 @@ iptables -A FORWARD -i eth1.6 -p tcp --dport 21 -m state --state NEW,ESTABLISHED
 iptables -A FORWARD -o eth1.6 -p tcp --dport 21 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 iptables -A FORWARD -i eth1.6 -p tcp --dport 20 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 iptables -A FORWARD -o eth1.6 -p tcp --dport 20 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
-
-#allow hacker02 to read munin shit
-iptables -A FORWARD -p tcp --dport 4949 -s 10.10.10.99 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
-#iptables -A FORWARD -i eth1 -s 10.10.10.99 -p tcp --dport 4949 -j ACCEPT
-#iptables -A FORWARD -o eth1 -d 10.10.10.99 -p tcp --sport 4949 -j ACCEPT
 
 # drop dhcp requests and answers from crossing interfaces
 iptables -A FORWARD -p udp --dport 68 -j ULOG --ulog-prefix 'DHCP xrossing: '
@@ -231,11 +217,6 @@ iptables -A FORWARD -i ppp0 -s 10.10.0.0/255.255.0.0 -j REJECT
 
 iptables -A FORWARD -d 10.5.0.0/24 -j ACCEPT
 
-# tillatt trafikk fra og til vulcano
-iptables -A FORWARD -s 10.10.10.86 -j ACCEPT
-iptables -A FORWARD -d 10.10.10.86 -j ACCEPT
-iptables -A FORWARD -s 10.10.3.86 -j ACCEPT
-iptables -A FORWARD -d 10.10.3.86 -j ACCEPT
 # samba!  ports 135 137 138 139 445 and..
 iptables -I INPUT 1 -p udp --dport 3544 -m state --state NEW -s 10.10.3.0/24 -j ACCEPT
 iptables -I INPUT 1 -p udp --dport 3544 -m state --state NEW -s 10.10.10.0/24 -j ACCEPT
@@ -243,7 +224,6 @@ iptables -I INPUT 1 -p udp --dport 3544 -m state --state NEW -s 10.10.7.0/24 -j 
 iptables -I INPUT 1 -p tcp --dport 3544 -m state --state NEW -s 10.10.3.0/24 -j ACCEPT
 iptables -I INPUT 1 -p tcp --dport 3544 -m state --state NEW -s 10.10.10.0/24 -j ACCEPT
 iptables -I INPUT 1 -p tcp --dport 3544 -m state --state NEW -s 10.10.7.0/24 -j ACCEPT
-
 
 # TOR
 iptables -I INPUT -p tcp --dport 9050 -m state --state NEW -j ACCEPT
@@ -290,13 +270,6 @@ fi
 
 # classify up kontoret
 #iptables -A POSTROUTING -t mangle -o eth0 -p tcp --src 10.10.2.0/24 -j CLASSIFY --set-class 1:10
-
-# port forwarding destination nat
-# iptables -t nat -A PREROUTING -p tcp -i eth0 -d 10.0.0.12 --dport 8888 -j DNAT --to 10.10.10.10
-#iptables -A PREROUTING -t nat -p tcp -d 10.0.0.12 --dport 2222 -m state --state NEW,ESTABLISHED,RELATED -j DNAT --to 10.0.0.4:22
-#
-#iptables -A PREROUTING -t nat -p tcp -d 11.0.0.12 --dport 4242 -m state --state NEW,ESTABLISHED,RELATED -j DNAT --to 10.10.42.201:22
-
 
 # restricting a host to known ports
 # iptables -A FORWARD -i eth1 -s 10.10.10.179 -p tcp --dport ! 80:1024 -j REJECT
