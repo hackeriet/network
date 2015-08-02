@@ -1,0 +1,182 @@
+# Hausmania Gateway
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+#iface eth0 inet dhcp
+#iface eth0 inet dhcpg_vlan24 1 1
+#allow-hotplug eth0
+
+auto eth0
+## Powertech testing interface
+## FAST IP
+iface eth0 inet static
+#    network 195.159.234.64/30
+     address 195.159.234.66
+     netmask 255.255.255.252
+     gateway 195.159.234.65
+# set high metric so that we can take this route over in case of failures.
+     metric 1000
+#    DNS 195.159.0.100
+#    DNS 195.159.0.200
+# "talk to this box in the server room interface"
+
+# LEGACY Nexgentel
+auto eth2
+iface eth2 inet static
+     address 10.0.0.2
+     netmask 255.255.255.0
+     metric 5000
+     gateway 10.0.0.1
+
+auto eth2:1
+iface eth2:1 inet static
+     address 10.0.1.2
+     netmask 255.255.255.0
+#address 10.2.0.1
+#netmask 255.255.255.0
+
+
+# l3 interface towards the new hsw7 router.
+# 10.0.127.0/23 is the new linknet scope. Pick
+# consecutive /30s from it wherever needed.
+auto eth1.2100
+iface eth1.2100 inet static
+#auto eth3
+#iface eth3 inet static
+	address 10.0.127.5
+	netmask 255.255.255.252
+	#up vconfig set_flag eth3 1 1
+	up vconfig set_flag eth1.2100 1 1
+	# Route a chunk of IPs to the new router.
+	post-up ip -4 route add 10.0.128.0/20 via 10.0.127.6
+	post-up ip -4 route add 10.0.23.0/24 via 10.0.127.6
+	post-up ip -4 route add 10.0.24.0/24 via 10.0.127.6
+	post-up ip -4 route add 10.0.25.0/24 via 10.0.127.6
+	post-up ip addr add 185.35.202.241/28 dev eth1.2100
+	post-up ip rout add 185.35.202.192/26 dev eth1.2100
+
+
+#iface eth3 inet6 static
+iface eth1.2100 inet6 static
+	address 2001:16d8:eee2:a127::5
+	netmask 64
+	post-up ip -6 route add 2001:16d8:eee2:24::/64 via 2001:16D8:eee2:a127::6
+	post-up ip -6 route add 2001:16d8:eee2:130::/64 via 2001:16D8:eee2:a127::6
+
+#alternative uplink smoothwall 
+# not reachable as of 2014-09-09
+auto eth1.15
+iface 	eth1.15 inet static
+   metric 200
+	address 10.5.0.252
+	broadcast 255.255.255.255
+	netmask 255.255.255.0
+#	gateway 10.5.0.1 
+	up vconfig set_flag eth1.15 1 1 
+
+# mgmt
+auto eth1
+iface eth1 inet static
+    address 10.10.1.1
+    broadcast 10.10.1.255
+    netmask 255.255.255.0
+    network 10.10.1.0
+
+iface eth1 inet6 static
+    address 2001:16d8:eee2:1::1
+    netmask 64
+
+# VLAN 2	kontor  # PORT 2 core
+auto eth1.2
+iface eth1.2 inet static
+address 10.10.2.1
+netmask 255.255.255.0
+up vconfig set_flag eth1.2 1 1
+
+# VLAN 3	humla # PORT 3 core
+auto eth1.3
+iface eth1.3 inet static
+	address 10.10.3.1
+	netmask 255.255.255.0
+	up vconfig set_flag eth1.3 1 1
+
+iface eth1.3 inet6 static
+	#address 2001:16d8:ee00:81c6::1
+	address 2001:16d8:eee2:0003::1
+	netmask 64
+
+# VLAN 5 # wut
+auto eth1.5
+iface eth1.5 inet static
+address 10.10.5.1
+netmask 255.255.255.0
+up vconfig set_flag eth1.5 1 1
+
+
+# VLAN 42	isolation-net. here lies 192.168.2.254 # AND 192.168.1.1 x 2
+# # 00:21:29:6F:E1:3C - radek @ musikk
+auto eth1.42
+iface eth1.42 inet static
+address 10.10.42.1
+netmask 255.255.255.0
+up vconfig set_flag eth1.42 1 1
+
+# VLAN 6	podium  # PORT 6 core
+auto eth1.6
+iface eth1.6 inet static
+address 10.10.6.1
+netmask 255.255.255.0
+up vconfig set_flag eth1.6 1 1
+
+# VLAN 7	4etg+3etg # PORT 9 trunk
+auto eth1.7
+iface eth1.7 inet static
+address 10.10.7.1
+netmask 255.255.255.0
+up vconfig set_flag eth1.7 1 1
+
+
+# VLAN 10	haus
+auto eth1.10
+iface eth1.10 inet static
+	address 10.10.10.1
+	netmask 255.255.255.0
+	up vconfig set_flag eth1.10 1 1
+
+# VLAN 88  musikk
+auto eth1.88
+iface eth1.88 inet static
+	address 10.10.88.1
+	netmask 255.255.255.0
+	up vconfig set_flag eth1.88 1 1
+
+# VLAN 69  skate hallen?
+
+auto eth1.69
+iface eth1.69 inet static
+	address 10.10.69.1
+	netmask 255.255.255.0
+	up vconfig set_flag eth1.69 1 1
+
+
+# VLAN 24      switches UNUSED
+#iface vlan24 inet static
+#address 10.10.2.1
+#netmask 255.255.255.0
+#network 10.10.1.0
+#broadcast 10.10.1.255
+#mtu 1500
+#vlan_raw_device eth1
+#up vconfig set fla# The primary network interface
+
+# this is for Nexgentel/inferneon pppoe passthru
+#auto dsl-provider
+iface dsl-provider inet ppp
+	pre-up /sbin/ifconfig eth0 up 
+	provider dsl-provider
+	# doesn't seem to work, but pppd didnt take a defroute last time I checked. lkarsten,feb2013.
+	#post-up ip route add default dev ppp0 || true
+	post-up /etc/rc.firewall || true
