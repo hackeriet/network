@@ -10,20 +10,20 @@ Port list:
 
 1 - kontoret / GB / vlan 2
 2 - vestbredden
-X - podium
-X - musikk
+3 - podium
 9 - second floor, on "fjerde" vlan.
 x - 69
 x - 69
 17 - hsw6-humla
 24 - h,hsw0<->uplink
 
-rogue 
+Operational notes 
 =====
-note! uplink 2 == 12% packet loss!
+humla uplink 2 == 12% packet loss!
 star is 00:00:24:CE:97:25
 rogue 00:23:69:26:05:13 = 4etasje wlan
 musikk - radeks rouge 50:e5:49:b4:ea:cd
+musikk - 00:13:d4:db:ce:ca
 
 hsw6 / "bord"
 =============
@@ -48,7 +48,7 @@ gang1 -unidentified/no link - DISCONNECT
 16 - vegg 3
 17 - skatehallen - vlan 69 - rouge 00:18:39:d3:98:fc
 18 - MC1.HMK
-19 - EMPTY vlan 3
+19 - Musikk - vlan 88
 20 - MC/teater
 21 - mad science lab - hsw4
 23 - "shoo"-switch trunk : 4 etg -> 3etg "experience" 
