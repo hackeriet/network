@@ -1,0 +1,47 @@
+cisco ios commands
+
+# to get help, type a (partial )command and then hit '?'
+
+# to see what is what
+show inter status
+# to look at vlans of an interface
+show run inter fa0/2
+
+do show ip rout
+do show run 
+#  to grep through show commands, pipe to 'inc':
+do show run | inc route
+
+# to enter admin mode
+enable
+
+conf t  - configure from status
+
+"show .. " statements dont work in management mode
+unless you prefix them with "do ", in which case,
+you don't get tab completion nor ?-help.
+
+to create a vlan with the cisco vlan ruter interface : "svi", do two things
+1 - vlan 2 descr
+2 - create router interface
+
+cisco vtp syncs vlans between switches
+
+# you can access the different ports by port type
+fa - FastEthernet gi - GigabyteEthernet te - TengigEthernet
+swithcport mode  acess/trunk
+access = untagged
+# set pvid: 
+native vlan foo
+
+# when you set vlans on a trunk switchport, you overwrite existing list unless you "add"
+switchport trunk vlan add 130
+
+# example of setting fa0/2 to only untagged vlan 130
+conf t
+inter fa0/2
+switchport acces vlan 130
+# we have a port description convention, to make it easy to grok which port goes where,
+# relative to layer 2; up means uplink, d means downlink, link means horizontal, srv means server port.
+descr "srv:blah" / "u:blix" / "d:hsw6" / "l:hgw0"
+
