@@ -39,7 +39,7 @@ iface eth2:1 inet static
 #netmask 255.255.255.0
 
 
-# l3 interface towards the new hsw7 router.
+# l3 interface towards the new hsw7 router - and out to blix uplink
 # 10.0.127.0/23 is the new linknet scope. Pick
 # consecutive /30s from it wherever needed.
 auto eth1.2100
@@ -66,11 +66,11 @@ iface eth1.2100 inet6 static
 	post-up ip -6 route add 2001:16d8:eee2:24::/64 via 2001:16D8:eee2:a127::6
 	post-up ip -6 route add 2001:16d8:eee2:130::/64 via 2001:16D8:eee2:a127::6
 
-#alternative uplink smoothwall 
-# not reachable as of 2014-09-09
+#h40 uplink smoothwall 
+# not reachable as of 2014-09-09 (robin confirms this is unplugged but cable works)
 auto eth1.15
 iface 	eth1.15 inet static
-   metric 200
+   	metric 20000
 	address 10.5.0.252
 	broadcast 255.255.255.255
 	netmask 255.255.255.0
@@ -124,14 +124,14 @@ address 10.10.42.1
 netmask 255.255.255.0
 up vconfig set_flag eth1.42 1 1
 
-# VLAN 6	podium  # PORT 6 core
+# VLAN 6	podium
 auto eth1.6
 iface eth1.6 inet static
 address 10.10.6.1
 netmask 255.255.255.0
 up vconfig set_flag eth1.6 1 1
 
-# VLAN 7	4etg+3etg # PORT 9 trunk
+# VLAN 7	4etg+3etg
 auto eth1.7
 iface eth1.7 inet static
 address 10.10.7.1
@@ -153,7 +153,7 @@ iface eth1.88 inet static
 	netmask 255.255.255.0
 	up vconfig set_flag eth1.88 1 1
 
-# VLAN 69  skate hallen?
+# VLAN 69  skate hallen
 
 auto eth1.69
 iface eth1.69 inet static
@@ -172,7 +172,7 @@ iface eth1.69 inet static
 #vlan_raw_device eth1
 #up vconfig set fla# The primary network interface
 
-# this is for Nexgentel/inferneon pppoe passthru
+# Nexgentel/inferneon pppoe passthru - Deprecated
 #auto dsl-provider
 iface dsl-provider inet ppp
 	pre-up /sbin/ifconfig eth0 up 
