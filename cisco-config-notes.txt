@@ -29,13 +29,13 @@ cisco vtp syncs vlans between switches
 
 # you can access the different ports by port type
 fa - FastEthernet gi - GigabyteEthernet te - TengigEthernet
-swithcport mode  acess/trunk
-access = untagged
+swithcport mode  access/trunk
+# "access" = "untagged"
 # set pvid: 
-native vlan foo
+switchport native vlan foo
 
 # when you set vlans on a trunk switchport, you overwrite existing list unless you "add"
-switchport trunk vlan add 130
+switchport trunk allowed vlan add 130
 
 # example of setting fa0/2 to only untagged vlan 130
 conf t
@@ -44,4 +44,7 @@ switchport acces vlan 130
 # we have a port description convention, to make it easy to grok which port goes where,
 # relative to layer 2; up means uplink, d means downlink, link means horizontal, srv means server port.
 descr "srv:blah" / "u:blix" / "d:hsw6" / "l:hgw0"
+
+# to save your work past reboots, you'll need to copy running to startup:
+copy running-config startup-config
 
