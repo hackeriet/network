@@ -1,3 +1,23 @@
+=========================
+Hausmania Switch Port Map
+=========================
+
+This is an attempt to map what is connected where over which vlans.
+
+The aim is to ease debugging link level problems and to be a point 
+of reference if someone pulls the wrong cable and forgets which port
+it should go in. There might also be things here that we tag for
+further investigation or as a quirk note.
+
+It should also help folks that for various reasons need to debug
+and have no access to the switch running configs.
+
+*Note* this is just an imperfect guide to the network.
+Although we encourage everyone to keep documentation up to date,
+the admins will sometimes  change the switch config without updating
+this document. The most up to date information is and always
+will be in the switch running config!
+
 hsw0 10.10.1.100
 ================
 
@@ -70,21 +90,34 @@ hsw4 madlab
 25 - vlan 24
 26 - uplink
 
-hole-sw (scn)
-=============
-VLAN 130 / hackeriet-servers
+hole-sw 
+=========
+show running brief - cisco ios command for interface /vlan mapping
+
+mostly VLAN 130 / hackeriet-servers
+4, 5 and 6 - vlan 3             - Not Connected
+19 - laug-sw2 trunk 3,24,25,130 - N/C
+20 - hgw trunk everything       - N/C
+21 - h:hsw0 trunk 1 3 24 130    - N/C
+22 - hsw4 trunk all but 69      - conn
+23 - d:hsw0 trunk haus vlans    - conn
+24 - link:star vlan 2100        - N/C
 
 wifi
 ====
+
+proctor - procurve @ mad science lab
+hackeriet0 - bare linksys @ hackeriet
+hackeriet.no - cisco wifi @ hackeriet
+
+most of these below are out of our control
 
 musikk - musikkavdelingen wifi - disconnected
 4etg - fourth floor
 haus-2etg-east - near rateb & the office
 kontoret - the office & library
 rida - ratebs netgear
-proctor - procurve @ humla
-hackeriet0 - linksys @ humla
-radekwlan - always problems
+radekwlan - 2etg musikk
 dlinkrouter - some router at musikk
 kays-zyxel - 3etg zyxel wifi
 
