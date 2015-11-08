@@ -35,6 +35,7 @@ Port list:
 x - 69
 x - 69
 17 - hsw6-humla
+18 - unknown 10base-T half-duplex / vlan nettlaug
 24 - h,hsw0<->uplink
 
 Operational notes 
