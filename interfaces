@@ -23,14 +23,6 @@ iface eth0 inet static
 #    DNS 195.159.0.200
 # "talk to this box in the server room interface"
 
-# LEGACY Nexgentel
-auto eth2
-iface eth2 inet static
-     address 10.0.0.2
-     netmask 255.255.255.0
-     metric 5000
-     gateway 10.0.0.1
-
 auto eth2:1
 iface eth2:1 inet static
      address 10.0.1.2
@@ -38,14 +30,11 @@ iface eth2:1 inet static
 #address 10.2.0.1
 #netmask 255.255.255.0
 
-
-# l3 interface towards the new hsw7 router - and out to blix uplink
+# l3 interface towards the new hole-sw router - and out to blix uplink
 # 10.0.127.0/23 is the new linknet scope. Pick
 # consecutive /30s from it wherever needed.
 auto eth1.2100
 iface eth1.2100 inet static
-#auto eth3
-#iface eth3 inet static
 	address 10.0.127.5
 	netmask 255.255.255.252
 	#up vconfig set_flag eth3 1 1
@@ -61,10 +50,12 @@ iface eth1.2100 inet static
 
 #iface eth3 inet6 static
 iface eth1.2100 inet6 static
-	address 2001:16d8:eee2:a127::5
+	#address 2001:16d8:eee2:a127::5
+	address 2a02:ed06:1000:1::2
 	netmask 64
-	post-up ip -6 route add 2001:16d8:eee2:24::/64 via 2001:16D8:eee2:a127::6
-	post-up ip -6 route add 2001:16d8:eee2:130::/64 via 2001:16D8:eee2:a127::6
+	post-up ip -6 route add default via 2a02:ed06:1000:1::1
+	#post-up ip -6 route add 2001:16d8:eee2:24::/64 via 2a02:ed06:1000:1
+	#post-up ip -6 route add 2001:16d8:eee2:130::/64 via 2a02:ed06:1000:1
 
 #h40 uplink smoothwall 
 # not reachable as of 2014-09-09 (robin confirms this is unplugged but cable works)
@@ -85,16 +76,16 @@ iface eth1 inet static
     netmask 255.255.255.0
     network 10.10.1.0
 
-iface eth1 inet6 static
-    address 2001:16d8:eee2:1::1
-    netmask 64
+#iface eth1 inet6 static
+#    address 2001:16d8:eee2:1::1
+#    netmask 64
 
 # VLAN 2	kontor  # PORT 2 core
 auto eth1.2
 iface eth1.2 inet static
-address 10.10.2.1
-netmask 255.255.255.0
-up vconfig set_flag eth1.2 1 1
+	address 10.10.2.1
+	netmask 255.255.255.0
+	up vconfig set_flag eth1.2 1 1
 
 # VLAN 3	humla # PORT 3 core
 auto eth1.3
@@ -105,39 +96,37 @@ iface eth1.3 inet static
 
 iface eth1.3 inet6 static
 	#address 2001:16d8:ee00:81c6::1
-	address 2001:16d8:eee2:0003::1
+	address 2a02:ed06:3::1
 	netmask 64
 
 # VLAN 5 # wut
 auto eth1.5
 iface eth1.5 inet static
-address 10.10.5.1
-netmask 255.255.255.0
-up vconfig set_flag eth1.5 1 1
-
+	address 10.10.5.1
+	netmask 255.255.255.0
+	up vconfig set_flag eth1.5 1 1
 
 # VLAN 42	isolation-net. here lies 192.168.2.254 # AND 192.168.1.1 x 2
 # # 00:21:29:6F:E1:3C - radek @ musikk
 auto eth1.42
 iface eth1.42 inet static
-address 10.10.42.1
-netmask 255.255.255.0
-up vconfig set_flag eth1.42 1 1
+	address 10.10.42.1
+	netmask 255.255.255.0
+	up vconfig set_flag eth1.42 1 1
 
 # VLAN 6	podium
 auto eth1.6
 iface eth1.6 inet static
-address 10.10.6.1
-netmask 255.255.255.0
-up vconfig set_flag eth1.6 1 1
+	address 10.10.6.1
+	netmask 255.255.255.0
+	up vconfig set_flag eth1.6 1 1
 
 # VLAN 7	4etg+3etg
 auto eth1.7
 iface eth1.7 inet static
-address 10.10.7.1
-netmask 255.255.255.0
-up vconfig set_flag eth1.7 1 1
-
+	address 10.10.7.1
+	netmask 255.255.255.0
+	up vconfig set_flag eth1.7 1 1
 
 # VLAN 10	haus
 auto eth1.10
@@ -161,22 +150,3 @@ iface eth1.69 inet static
 	netmask 255.255.255.0
 	up vconfig set_flag eth1.69 1 1
 
-
-# VLAN 24      switches UNUSED
-#iface vlan24 inet static
-#address 10.10.2.1
-#netmask 255.255.255.0
-#network 10.10.1.0
-#broadcast 10.10.1.255
-#mtu 1500
-#vlan_raw_device eth1
-#up vconfig set fla# The primary network interface
-
-# Nexgentel/inferneon pppoe passthru - Deprecated
-#auto dsl-provider
-iface dsl-provider inet ppp
-	pre-up /sbin/ifconfig eth0 up 
-	provider dsl-provider
-	# doesn't seem to work, but pppd didnt take a defroute last time I checked. lkarsten,feb2013.
-	#post-up ip route add default dev ppp0 || true
-	post-up /etc/rc.firewall || true
