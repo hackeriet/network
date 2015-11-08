@@ -1,8 +1,9 @@
-
 # Source NAT to put humlanett on fibre addresses
 
-iptables --table nat --append POSTROUTING -o eth1.2100 --source 10.10.3.0/24  -d ! 10.0.0.0/8 -j SNAT --to-source 185.35.202.241
+iptables --table nat --append POSTROUTING -o eth1.2100 --source 10.10.3.0/24  ! -d 10.0.0.0/8 -j SNAT --to-source 185.35.202.241-185.35.202.254
 
+# this is an alternative that only requires the default route for outbound 10.10.3.0/24 packages
+iptables -A PREROUTING -t mangle --source 10.10.3.0/24 ! -d 10.0.0.0/8 -j MARK --set-mark 1
 # iproute2:magic second route table to put humlanett on blix fibre link
 ip route add default via 10.0.127.6 dev eth1.2100 table BLIX
 # except for default route, the route table should look like the main route table
@@ -24,18 +25,13 @@ ip route add 10.0.25.0/24 via 10.0.127.6 dev eth1.2100 table BLIX
 ip route add 10.0.127.4/30 dev eth1.2100  table BLIX
 ip route add 10.0.128.0/20 via 10.0.127.6 dev eth1.2100 table BLIX
 ip route add 10.5.0.0/24 dev eth1.15  table BLIX
+# these routes are likely needed in table BLIX even with the fwmark method
 ip route add 185.35.202.192/26 dev eth1.2100  table BLIX
 ip route add 185.35.202.240/28 dev eth1.2100  table BLIX
 ip route add 195.159.234.64/30 dev eth0 table BLIX
 
 # now put humlanett on second route table:
 ip rule add from 10.10.3.0/24 table BLIX
-# use these magic markers for something later..
-#ip rule add from all fwmark 1 table BLIX
-#ip rule add from all fwmark 2 nat 185.35.202.241/28
+ip rule add from all fwmark 1 table BLIX
 # for instance, To mark the packets that have the 22 and 80 as destination port we will use the MANGLE table...
 #iptables -A PREROUTING -t mangle -i eth0 -p tcp --dport 22 -j MARK --set-mark 1
-#iptables -A PREROUTING -t mangle -i eth0 -p tcp --dprot 80 -j MARK --set-mark 2
-
-
-
