@@ -67,6 +67,8 @@ iptables -A FORWARD -s 172.16.0.0/16 -j REJECT
 
 # kick the st√sh that puts humlanett on fiber :D
 /etc/rc.route2
+# nat for the haus
+iptables --table nat --append POSTROUTING -o eth0 -j MASQUERADE
 
 # allow established and related incoming
 iptables -A FORWARD -p all -i eth1.15 -m state --state ESTABLISHED,RELATED -j ACCEPT
@@ -81,6 +83,15 @@ iptables -A INPUT -p udp --dport 69 -j ACCEPT
 iptables -A INPUT -p udp --dport 2049 -j ACCEPT
 iptables -A INPUT -p tcp --dport 2049 -j ACCEPT
 iptables -A INPUT -p tcp --dport 4000:4003 -j ACCEPT
+
+# google talk
+iptables -A FORWARD -p tcp --dport 5222 -j ACCEPT
+iptables -A FORWARD -p tcp --dport 5223 -j ACCEPT
+iptables -A FORWARD -p tcp --dport 5224 -j ACCEPT
+iptables -A FORWARD -p tcp --dport 5228 -j ACCEPT
+iptables -A FORWARD -p tcp --dport 5228 -j ACCEPT
+iptables -A FORWARD -p tcp --dport 5269 -j ACCEPT
+iptables -A FORWARD -p udp --dport 19302:19309 -j ACCEPT
              
 # SSH
 iptables -A INPUT -p tcp --dport 22 -m state --state NEW -j ACCEPT
