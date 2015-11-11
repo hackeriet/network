@@ -54,6 +54,14 @@ Quick tutorial::
  - set VLAN on a port: ``configure vlan VLANNAME add ports 9 untagged`` (might need to ``configure vlan OLDVLAN delete ports 9`` first.)
  - save config to nvram: ``save``
 
+HP Procurves
+============
+
+We have a few HP Procurve switches. They usually have "manager" as the SSH username.
+
+* http://services.geant.net/cbp/Knowledge_Base/Campus_Networking/Documents/gn3-na3-t4-cbpd111.pdf 
+
+
 Splash
 ======
 
