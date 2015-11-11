@@ -31,7 +31,7 @@ Port list:
 1 - kontoret / GB / vlan 2
 2 - vestbredden
 3 - podium
-9 - second floor, on "fjerde" vlan.
+9 - haus-2etg-sw (.1q)
 x - 69
 x - 69
 17 - hsw6-humla
@@ -72,17 +72,17 @@ gang1 -unidentified/no link - DISCONNECT
 19 - Musikk - vlan 88
 20 - MC/teater
 21 - mad science lab - hsw4
-23 - "shoo"-switch trunk : 4 etg -> 3etg "experience" 
+23 - haus-4etg-sw (.1q) -> 3etg "experience" 
 24 - UPLINK vlan 1+trunk
 
 
-shoo 
-====
+haus-etg4-sw
+============
 
-(vlan 7, 4.etg)
-1 - trunk uplink humla
-3 - etg 3
-22?- 4etasje wlan
+1-25: vlan 10 hausmania.
+unkown port: access port to 3. etg switch.
+23: wifi-access point.
+26 - trunk uplink hsw0/hackeriet. (gigabit)
 
 hsw4 madlab
 ============
