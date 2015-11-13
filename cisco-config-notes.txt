@@ -40,11 +40,34 @@ switchport trunk allowed vlan add 130
 # example of setting fa0/2 to only untagged vlan 130
 conf t
 inter fa0/2
-switchport acces vlan 130
+switchport access vlan 130
 # we have a port description convention, to make it easy to grok which port goes where,
 # relative to layer 2; up means uplink, d means downlink, link means horizontal, srv means server port.
 descr "srv:blah" / "u:blix" / "d:hsw6" / "l:hgw0"
 
 # to save your work past reboots, you'll need to copy running to startup:
 copy running-config startup-config
+
+### confing ssh access on uplink trunk management vlan from scratch:
+conf t
+# set a hostname
+hostname haus-magic-sw
+# set up a username and password 
+username nettlaug privilege 15 password 0 HausAdminPassword23
+# create an admin vlan
+vlan 23
+name mgmt,hausmania
+# enable ssh
+ip ssh version 2
+# generate host key
+crypt generate rsa something something...
+# set a vlan interface
+interface Vlan 23
+ip address 10.0.23.4 netmask 255.255.255.0
+exit
+# trunk vlan 23 to port 48
+inter gi0/48
+switchport mode trunk
+switchport trunk allowed vlan add 23
+
 
