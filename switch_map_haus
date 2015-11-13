@@ -18,6 +18,29 @@ the admins will sometimes  change the switch config without updating
 this document. The most up to date information is and always
 will be in the switch running config!
 
+haus-core-sw 10.0.23.4
+======================
+
+replaces hsw0
+
+1 - kontoret / vlan 2
+2 - podium   / vlan 6
+3-20 - haus  / vlan10
+22- 2etg        trunk
+23- hackerit-sw trunk
+24- hole-sw up  trunk
+
+hackeriet-sw 10.0.23.3
+======================
+
+replaces hsw6
+
+ 1-16 - hackeriet / vlan 3
+17-44 - hausmania / vlan 10
+46    - musikk 
+47    - 4etg         trunk
+48    - core         trunk
+
 hsw0 10.10.1.100
 ================
 
