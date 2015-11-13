@@ -4,8 +4,10 @@ cisco ios commands
 
 # to see what is what
 show inter status
-# to look at vlans of an interface
+# to look at vlans of an interface (fa0 are 100Mbit ports, gi0 for gigabit ports)
 show run inter fa0/2
+# to look at ports active on a specific vlan do
+show vlan id 23
 
 do show ip rout
 do show run 
@@ -15,40 +17,50 @@ do show run | inc route
 # to enter admin mode
 enable
 
-conf t  - configure from status
+conf t  - configure from terminal
 
 "show .. " statements dont work in management mode
 unless you prefix them with "do ", in which case,
 you don't get tab completion nor ?-help.
 
-to create a vlan with the cisco vlan ruter interface : "svi", do two things
-1 - vlan 2 descr
-2 - create router interface
-
 cisco vtp syncs vlans between switches
 
+you need to "do wr" to save your changes across reboots
+
 # you can access the different ports by port type
-fa - FastEthernet gi - GigabyteEthernet te - TengigEthernet
+fa - FastEthernet,gi - GigabyteEthernet,te - TengigEthernet
 swithcport mode  access/trunk
 # "access" = "untagged"
 # set pvid: 
 switchport native vlan foo
 
 # when you set vlans on a trunk switchport, you overwrite existing list unless you "add"
-switchport trunk allowed vlan add 130
+# example trunked port
+inter gi0/48
+switchport mode trunk
+switchport trunk allowed vlan add 10,23,130
+descr d:mytrunk
 
 # example of setting fa0/2 to only untagged vlan 130
-conf t
 inter fa0/2
 switchport access vlan 130
 # we have a port description convention, to make it easy to grok which port goes where,
 # relative to layer 2; up means uplink, d means downlink, link means horizontal, srv means server port.
 descr "srv:blah" / "u:blix" / "d:hsw6" / "l:hgw0"
 
+# example of setting ports 1 through 16 to vlan 10
+conf t
+inter range gi0/1-16
+switchport access vlan 10
+spanning-tree portfast
+end
+
 # to save your work past reboots, you'll need to copy running to startup:
 copy running-config startup-config
+# equivalent to
+do wr
 
-### confing ssh access on uplink trunk management vlan from scratch:
+### example confing ssh access on uplink trunk management vlan from scratch:
 conf t
 # set a hostname
 hostname haus-magic-sw
