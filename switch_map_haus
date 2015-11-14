@@ -41,6 +41,38 @@ replaces hsw6
 47    - 4etg         trunk
 48    - core         trunk
 
+known cabling & vlan assignment:
+---------------------------------
+
+3 - humla bar
+3 - humla opp satan (bar overhead)
+3 - humla scene 1 på kabel
+3 - humla door
+3 - humla proctor wlan AP scene "hackeriet.no"
+3 - "opp 2"
+3 - humla hackeriet0 wlan
+3 - mad science lab - hsw4
+3 - humla scene 2 på kabel 3
+
+10 - problem?
+10 - monz
+10 - rateb 
+10 - vegg 3
+10 - skatehallen - vlan 69 - rouge 00:18:39:d3:98:fc
+10 - MC1.HMK
+10 - Musikk - vlan 88
+10 - MC/teater
+vegg1 -unidentified/no link - DISCONNECT
+gang1 -unidentified/no link - DISCONNECT
+
+Operational notes 
+------------------
+humla uplink 2 == 12% packet loss!
+star is 00:00:24:CE:97:25
+rogue 00:23:69:26:05:13 = 4etasje wlan
+musikk - radeks rouge 50:e5:49:b4:ea:cd
+musikk - 00:13:d4:db:ce:ca
+
 hsw0 10.10.1.100
 ================
 
@@ -60,43 +92,6 @@ x - 69
 17 - hsw6-humla
 18 - unknown 10base-T half-duplex / vlan nettlaug
 24 - h,hsw0<->uplink
-
-Operational notes 
-=====
-humla uplink 2 == 12% packet loss!
-star is 00:00:24:CE:97:25
-rogue 00:23:69:26:05:13 = 4etasje wlan
-musikk - radeks rouge 50:e5:49:b4:ea:cd
-musikk - 00:13:d4:db:ce:ca
-
-hsw6 / "bord"
-=============
-vegg1 -unidentified/no link - DISCONNECT
-gang1 -unidentified/no link - DISCONNECT
-
-1 - UPLINK
-2 - mgmt
-3 - humla bar
-4 - humla opp satan (bar overhead)
-5 - humla scene 1 på kabel
-6 - humla door
-7 - humla proctor wlan AP scene "hackeriet.no"
-8 - "opp 2"
-10 - humla hackeriet0 wlan
-
-11 - humla scene 2 på kabel 3
-12 - EMPTY vlan 3
-13 - problem?
-14 - monz
-15 - rateb 
-16 - vegg 3
-17 - skatehallen - vlan 69 - rouge 00:18:39:d3:98:fc
-18 - MC1.HMK
-19 - Musikk - vlan 88
-20 - MC/teater
-21 - mad science lab - hsw4
-23 - haus-4etg-sw (.1q) -> 3etg "experience" 
-24 - UPLINK vlan 1+trunk
 
 
 haus-etg4-sw
