@@ -22,13 +22,20 @@ haus-core-sw 10.0.23.4
 ======================
 
 replaces hsw0
+Mounted on the wall left of the window in the basement/server room.
+New main core switch for Hausmania.
+
+Port list:
 
 1 - kontoret / vlan 2
 2 - podium   / vlan 6
-3-20 - haus  / vlan10
+3 - vestbredden
+4-20 - haus  / vlan10
 22- 2etg        trunk
 23- hackerit-sw trunk
 24- hole-sw up  trunk
+
+20 - powerhaus
 
 hackeriet-sw 10.0.23.3
 ======================
@@ -72,27 +79,6 @@ star is 00:00:24:CE:97:25
 rogue 00:23:69:26:05:13 = 4etasje wlan
 musikk - radeks rouge 50:e5:49:b4:ea:cd
 musikk - 00:13:d4:db:ce:ca
-
-hsw0 10.10.1.100
-================
-
-Extreme Summit S400-24t
-
-Mounted on the wall left of the window in the basement/server room.
-New main core switch for Hausmania.
-
-Port list:
-
-1 - kontoret / GB / vlan 2
-2 - vestbredden
-3 - podium
-9 - haus-2etg-sw (.1q)
-x - 69
-x - 69
-17 - hsw6-humla
-18 - unknown 10base-T half-duplex / vlan nettlaug
-24 - h,hsw0<->uplink
-
 
 haus-etg4-sw
 ============
