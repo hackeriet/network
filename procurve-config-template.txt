@@ -1,0 +1,47 @@
+;
+; Example configuration for new procurve switches.
+
+hostname FOOSW
+time timezone 60
+time daylight-time-rule Middle-Europe-and-Portugal
+no cdp run
+no web-management
+no telnet-server
+interface 26
+   name "uplink"
+exit
+ip default-gateway 10.0.23.1
+logging facility local0
+logging 185.35.202.202
+
+vlan 23
+   name "mgmt,haus"
+   ip address 10.0.23.XXX 255.255.255.0
+   tagged 26
+   no ip igmp
+   exit
+
+vlan 10
+   name "hausmania"
+   untagged 1-25
+   no ip address
+   tagged 26
+   ip igmp
+   exit
+
+aaa authentication login privilege-mode
+dhcp-snooping vlan 10
+interface 26
+   dhcp-snooping trust
+   exit
+
+management-vlan 23
+
+spanning-tree protocol-version rstp
+
+; enable loop protect on all client-facing ports.
+loop-protect 1-25
+
+crypto key generate ssh rsa
+ip ssh
+
