@@ -80,13 +80,13 @@ rogue 00:23:69:26:05:13 = 4etasje wlan
 musikk - radeks rouge 50:e5:49:b4:ea:cd
 musikk - 00:13:d4:db:ce:ca
 
-haus-etg4-sw
+haus-4etg-sw
 ============
 
 1-25: vlan 10 hausmania.
-unkown port: access port to 3. etg switch.
+unknown port: access port to 3. etg switch.
 23: wifi-access point.
-26 - trunk uplink hsw0/hackeriet. (gigabit)
+26: trunk uplink hackeriet-sw. (gigabit)
 
 hsw4 madlab
 ============
@@ -101,8 +101,6 @@ show running brief - cisco ios command for interface /vlan mapping
 
 mostly VLAN 130 / hackeriet-servers
 4, 5 and 6 - vlan 3             - Not Connected
-19 - laug-sw2 trunk 3,24,25,130 - N/C
-20 - hgw trunk everything       - N/C
 21 - h:hsw0 trunk 1 3 24 130    - N/C
 22 - hsw4 trunk all but 69      - conn
 23 - d:hsw0 trunk haus vlans    - conn
@@ -115,7 +113,7 @@ proctor - procurve @ mad science lab
 hackeriet0 - bare linksys @ hackeriet
 hackeriet.no - cisco wifi @ hackeriet
 
-most of these below are out of our control
+most of these below are out of our control:
 
 musikk - musikkavdelingen wifi - disconnected
 4etg - fourth floor
@@ -125,5 +123,3 @@ rida - ratebs netgear
 radekwlan - 2etg musikk
 dlinkrouter - some router at musikk
 kays-zyxel - 3etg zyxel wifi
-
-
