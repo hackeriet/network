@@ -42,7 +42,6 @@ iface eth1.2100 inet static
 	# Route a chunk of IPs to the new router.
 	post-up ip -4 route add 10.0.128.0/20 via 10.0.127.6
 	post-up ip -4 route add 10.0.23.0/24 via 10.0.127.6
-	post-up ip -4 route add 10.0.24.0/24 via 10.0.127.6
 	post-up ip -4 route add 10.0.25.0/24 via 10.0.127.6
 	post-up ip addr add 185.35.202.241/28 dev eth1.2100
 	post-up ip rout add 185.35.202.192/26 dev eth1.2100
@@ -59,14 +58,14 @@ iface eth1.2100 inet6 static
 
 #h40 uplink smoothwall 
 # not reachable as of 2014-09-09 (robin confirms this is unplugged but cable works)
-auto eth1.15
-iface 	eth1.15 inet static
-   	metric 20000
-	address 10.5.0.252
-	broadcast 255.255.255.255
-	netmask 255.255.255.0
+#auto eth1.15
+#iface 	eth1.15 inet static
+#   	metric 20000
+#	address 10.5.0.252
+#	broadcast 255.255.255.255
+#	netmask 255.255.255.0
 #	gateway 10.5.0.1 
-	up vconfig set_flag eth1.15 1 1 
+#	up vconfig set_flag eth1.15 1 1 
 
 # mgmt
 auto eth1
