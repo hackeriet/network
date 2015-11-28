@@ -81,6 +81,10 @@ iptables -A INPUT -p udp --dport 2049 -j ACCEPT
 iptables -A INPUT -p tcp --dport 2049 -j ACCEPT
 iptables -A INPUT -p tcp --dport 4000:4003 -j ACCEPT
 
+# our big gaping snmp hole
+iptables -A FORWARD -p udp --dport 161 -j ACCEPT
+iptables -A FORWARD -p udp --dport 161 -j ACCEPT
+
 # google talk
 iptables -A FORWARD -p tcp --dport 5222 -j ACCEPT
 iptables -A FORWARD -p tcp --dport 5223 -j ACCEPT
@@ -89,6 +93,9 @@ iptables -A FORWARD -p tcp --dport 5228 -j ACCEPT
 iptables -A FORWARD -p tcp --dport 5228 -j ACCEPT
 iptables -A FORWARD -p tcp --dport 5269 -j ACCEPT
 iptables -A FORWARD -p udp --dport 19302:19309 -j ACCEPT
+
+# munin to ie kx
+iptables -A FORWARD -p tcp --dport 4949 -j ACCEPT
              
 # SSH
 iptables -A INPUT -p tcp --dport 22 -m state --state NEW -j ACCEPT
