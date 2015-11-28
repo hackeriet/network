@@ -19,6 +19,9 @@ iptables -P FORWARD DROP
 
 echo 1 > /proc/sys/net/ipv4/ip_forward
 echo 1 > /proc/sys/net/ipv4/conf/all/proxy_arp
+# rp filter stops returning packets when we have two POPs
+sysctl net.ipv4.conf.all.rp_filter=0
+
 
 modprobe ip_conntrack hashsize=4096
 
