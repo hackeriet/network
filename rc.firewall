@@ -70,12 +70,6 @@ iptables -A FORWARD -s 172.16.0.0/16 -j REJECT
 # nat for the haus
 iptables --table nat --append POSTROUTING -o eth0 -j MASQUERADE
 
-# allow established and related incoming
-iptables -A FORWARD -p all -i eth1.15 -m state --state ESTABLISHED,RELATED -j ACCEPT
-# allow all interfaces to establish new connections out through eth1.15
-iptables -A FORWARD -p all ! -i eth1.15 -o eth1.15 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
-iptables -A FORWARD -p all ! -i eth1.15 -o eth1.15 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
-
 # SERVICES on this host
 
 # pxe pixe for fuckssake
@@ -182,12 +176,6 @@ iptables -A FORWARD -p all -i $UPLINK -m state --state ESTABLISHED,RELATED -j AC
 iptables -A FORWARD -i eth1.3 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 iptables -A FORWARD -o eth1.3 -m state --state ESTABLISHED,RELATED -j ACCEPT
 # iptables -A FORWARD -i eth1 -o eth1.3 -m state --state  ESTABLISHED,RELATED -j ACCEPT
-
-# allow ftp to podium 
-iptables -A FORWARD -i eth1.6 -p tcp --dport 21 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
-iptables -A FORWARD -o eth1.6 -p tcp --dport 21 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
-iptables -A FORWARD -i eth1.6 -p tcp --dport 20 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
-iptables -A FORWARD -o eth1.6 -p tcp --dport 20 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 # drop dhcp requests and answers from crossing interfaces
 iptables -A FORWARD -p udp --dport 68 -j ULOG --ulog-prefix 'DHCP xrossing: '

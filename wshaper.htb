@@ -32,8 +32,8 @@
 # Båndbredde (Opp/Ned) [kbps/kbps]:	1.468 / 19.240
 # new count (2013-01-12): 1.212 / 19.139
 
-DOWNLINK=16000
-UPLINK=1000
+DOWNLINK=18000
+UPLINK=1500
 
 #DEV=eth0
 DEV=$1
