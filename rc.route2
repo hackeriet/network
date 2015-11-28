@@ -1,6 +1,6 @@
 # Source NAT to put humlanett on fibre addresses
 
-iptables --table nat --append POSTROUTING -o eth1.2100 --source 10.10.3.0/24  ! -d 10.0.0.0/8 -j SNAT --to-source 185.35.202.241-185.35.202.254
+iptables --table nat --append POSTROUTING -o eth1.2100 --source 10.10.3.0/24  ! -d 10.0.0.0/8 -j SNAT --to-source 185.35.202.241-185.35.202.251
 
 # this is an alternative that only requires the default route for outbound 10.10.3.0/24 packages
 iptables -A PREROUTING -t mangle --source 10.10.3.0/24 ! -d 10.0.0.0/8 -j MARK --set-mark 1
