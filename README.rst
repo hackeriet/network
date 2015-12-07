@@ -54,6 +54,15 @@ Quick tutorial::
  - set VLAN on a port: ``configure vlan VLANNAME add ports 9 untagged`` (might need to ``configure vlan OLDVLAN delete ports 9`` first.)
  - save config to nvram: ``save``
 
+HP Procurve
+===========
+
+We have a few managed HP Procurve switches. They usually have "manager" as the SSH username.
+
+* https://h10145.www1.hp.com/downloads/DownloadSoftware.aspx?SoftwareReleaseUId=16635&ProductNumber=J4900C
+* http://services.geant.net/cbp/Knowledge_Base/Campus_Networking/Documents/gn3-na3-t4-cbpd111.pdf 
+* http://evilrouters.net/2009/02/02/upgrading-procurve-firmware-via-tftp/
+
 Splash
 ======
 

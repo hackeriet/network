@@ -1,0 +1,27 @@
+
+graph switches {
+node [
+    shape=box, 
+    fontname="arial",
+    fontsize=8,
+    style=filled,
+  ];
+  splines="compound"
+  label = "Hausmania network";
+
+  star [ label="star\n10.0.127.5\n(in server rack)", shape=ellipse color="#cf7b7b"];
+  core [ label="haus-core-sw\n10.0.23.5\n(in server room)" ];
+  hole [ label="hole-sw\n10.0.23.1\n(in server rack)" shape=ellipse color="#cf7b7b"];
+  hackeriet [ label="hackeriet-sw\n10.0.23.3\n(in 1106)" ];
+  haus2etg [ label="haus-2etg-sw\n10.0.23.10\n(outside 1209)" ];
+  haus4etg [ label="haus-4etg-sw\n10.0.23.6\n(outside 1405)" ];
+  musikk [ label="haus-musikk-sw\n10.0.23.9\n(hallway outside 1202)" ];
+
+  hole -- star;
+  hole -- core [dir=forward, taillabel="port26"];
+  core -- hackeriet [dir=forward label="port25"];
+  core -- haus2etg [dir=forward label="port24" ];
+  hackeriet -- haus4etg [ dir=forward ];
+  hackeriet -- musikk [dir=forward ];
+}
+

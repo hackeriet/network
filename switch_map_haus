@@ -18,71 +18,75 @@ the admins will sometimes  change the switch config without updating
 this document. The most up to date information is and always
 will be in the switch running config!
 
-hsw0 10.10.1.100
-================
+haus-core-sw 10.0.23.4
+======================
 
-Extreme Summit S400-24t
-
+replaces hsw0
 Mounted on the wall left of the window in the basement/server room.
 New main core switch for Hausmania.
 
 Port list:
 
-1 - kontoret / GB / vlan 2
-2 - vestbredden
-3 - podium
-9 - second floor, on "fjerde" vlan.
-x - 69
-x - 69
-17 - hsw6-humla
-18 - unknown 10base-T half-duplex / vlan nettlaug
-24 - h,hsw0<->uplink
+1 - kontoret / vlan 2
+2 - podium   / vlan 6
+3 - vestbredden
+4-20 - haus  / vlan10
+22- 2etg        trunk
+23- hackerit-sw trunk
+24- hole-sw up  trunk
+
+20 - powerhaus
+
+hackeriet-sw 10.0.23.3
+======================
+
+replaces hsw6
+
+ 1-16 - hackeriet / vlan 3
+17-44 - hausmania / vlan 10
+46    - musikk 
+47    - 4etg         trunk
+48    - core         trunk
+
+known cabling & vlan assignment:
+---------------------------------
+
+3 - humla bar
+3 - humla opp satan (bar overhead)
+3 - humla scene 1 på kabel
+3 - humla door
+3 - humla proctor wlan AP scene "hackeriet.no"
+3 - "opp 2"
+3 - humla hackeriet0 wlan
+3 - mad science lab - hsw4
+3 - humla scene 2 på kabel 3
+
+10 - problem?
+10 - monz
+10 - rateb 
+10 - vegg 3
+10 - skatehallen - vlan 69 - rouge 00:18:39:d3:98:fc
+10 - MC1.HMK
+10 - Musikk - vlan 88
+10 - MC/teater
+vegg1 -unidentified/no link - DISCONNECT
+gang1 -unidentified/no link - DISCONNECT
 
 Operational notes 
-=====
+------------------
 humla uplink 2 == 12% packet loss!
 star is 00:00:24:CE:97:25
 rogue 00:23:69:26:05:13 = 4etasje wlan
 musikk - radeks rouge 50:e5:49:b4:ea:cd
 musikk - 00:13:d4:db:ce:ca
 
-hsw6 / "bord"
-=============
-vegg1 -unidentified/no link - DISCONNECT
-gang1 -unidentified/no link - DISCONNECT
+haus-4etg-sw
+============
 
-1 - UPLINK
-2 - mgmt
-3 - humla bar
-4 - humla opp satan (bar overhead)
-5 - humla scene 1 på kabel
-6 - humla door
-7 - humla proctor wlan AP scene "hackeriet.no"
-8 - "opp 2"
-10 - humla hackeriet0 wlan
-
-11 - humla scene 2 på kabel 3
-12 - EMPTY vlan 3
-13 - problem?
-14 - monz
-15 - rateb 
-16 - vegg 3
-17 - skatehallen - vlan 69 - rouge 00:18:39:d3:98:fc
-18 - MC1.HMK
-19 - Musikk - vlan 88
-20 - MC/teater
-21 - mad science lab - hsw4
-23 - "shoo"-switch trunk : 4 etg -> 3etg "experience" 
-24 - UPLINK vlan 1+trunk
-
-
-shoo 
-====
-
-(vlan 7, 4.etg)
-1 - trunk uplink humla
-3 - etg 3
-22?- 4etasje wlan
+1-25: vlan 10 hausmania.
+unknown port: access port to 3. etg switch.
+23: wifi-access point.
+26: trunk uplink hackeriet-sw. (gigabit)
 
 hsw4 madlab
 ============
@@ -97,8 +101,6 @@ show running brief - cisco ios command for interface /vlan mapping
 
 mostly VLAN 130 / hackeriet-servers
 4, 5 and 6 - vlan 3             - Not Connected
-19 - laug-sw2 trunk 3,24,25,130 - N/C
-20 - hgw trunk everything       - N/C
 21 - h:hsw0 trunk 1 3 24 130    - N/C
 22 - hsw4 trunk all but 69      - conn
 23 - d:hsw0 trunk haus vlans    - conn
@@ -111,7 +113,7 @@ proctor - procurve @ mad science lab
 hackeriet0 - bare linksys @ hackeriet
 hackeriet.no - cisco wifi @ hackeriet
 
-most of these below are out of our control
+most of these below are out of our control:
 
 musikk - musikkavdelingen wifi - disconnected
 4etg - fourth floor
@@ -121,5 +123,3 @@ rida - ratebs netgear
 radekwlan - 2etg musikk
 dlinkrouter - some router at musikk
 kays-zyxel - 3etg zyxel wifi
-
-
