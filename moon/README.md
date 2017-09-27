@@ -123,7 +123,15 @@ We are fed up of having custom scripts laying around, so we do simply two things
 * iptables-save > /etc/iptables/rules.v4
 
 ..so that the rules are persistent, and come up again at reboot.
+Once you came all the way here, you have a functioning router gateway. Congrats. You have a clients.
 
 ## More stuff (but not strictly necessary)
 
+Ensure that the following is in place:
+
+* ntp is installed.
+* /etc/localtime points to Oslo.
+* password authentication is turned off and your public ssh-key is where it is supposed to be.
+* fail2ban is installed and guards ssh from brute force attacks (because of course, you will turn password authentication back on at some point, DEV).
+* unattended-upgrades is installed ( if you have read all this document, i can't imagine seeing you keeping your machine security updated ).
 
