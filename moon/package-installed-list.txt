@@ -311,6 +311,7 @@ ii  rsyslog                       8.24.0-1                       amd64        re
 ii  sed                           4.4-1                          amd64        GNU stream editor for filtering/transforming text
 ii  sensible-utils                0.0.9                          all          Utilities for sensible alternative selection
 ii  sgml-base                     1.29                           all          SGML infrastructure and SGML catalog file support
+ii  sudo                          1.8.19p1-2.1                   amd64        Provide limited super user privileges to specific users
 ii  systemd                       232-25+deb9u1                  amd64        system and service manager
 ii  systemd-sysv                  232-25+deb9u1                  amd64        system and service manager - SysV links
 ii  sysvinit-utils                2.88dsf-59.9                   amd64        System-V-like utilities
