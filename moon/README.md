@@ -138,7 +138,7 @@ iptables-save > /etc/iptables/rules.v4
 ..so that the rules are persistent, and come up again at reboot.
 Once you came all the way here, you have a functioning router gateway. Congrats. You have clients.
 
-## More stuff (but not strictly necessary)
+## More stuff (goodies but not strictly necessary)
 
 Ensure that the following is in place:
 
@@ -153,8 +153,8 @@ Ensure that the following is in place:
 In the old days we had a more basic infrastructure, and we had much less bandwidth than we do today. We also had worse switches, and in some extent,
 worse people behind their client machines. The use of cable internet has dropped in the house, most people use some form of poor wireless access point.
 Access points per default have their own NAT and some additional client isolation, and glossy crap of course...
-Today some of the protection we implemented in the firewall rules is covered by the switches we use.
+...today some of the protection we used to implement in the firewall rules is covered by the switches we use.
 However, for the record, in the old days we used an rc.firewall script that per default dropped all traffic, while allowing only the necessary traffic.
 We are now going to do the opposite, because we don't want to deviate from an installation that is minimal and easy to mantain.
-We will see if this is a good idea or not.
+We will see if this is a good idea or not. In the meantime, the rc.firewall script is deprecated, and the new one is WIP. 
 
