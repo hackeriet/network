@@ -12,6 +12,10 @@ map_haus_nett - a map of the landscape
 Gateway
 =======
 
+DEPRECATION NOTE: look in the "moon" directory.
+There you will find much more extensive documentation
+about the new setup, in effect since 2017-09-27.
+
 The gateway is configured in the following files:
 
 Firewall
