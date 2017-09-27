@@ -1,0 +1,75 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto eno1
+allow-hotplug eno1
+iface eno1 inet static
+ 	address 185.35.202.238
+ 	netmask 255.255.255.192
+	gateway 185.35.202.193
+	# dns-* options are implemented by the resolvconf package, if installed
+	dns-nameservers 8.8.8.8
+	dns-search hackeriet.no
+
+## VLAN 2        kontor
+auto eno2.2
+iface eno2.2 inet static
+        address 10.10.2.1
+        netmask 255.255.255.0
+        up vconfig set_flag eno2.2 1 1
+#
+#
+## VLAN 3        wired,hackeriet
+auto eno2.3
+iface eno2.3 inet static
+        address 10.10.3.1
+        netmask 255.255.255.0
+        up vconfig set_flag eno2.3 1 1
+#
+#iface eno2.3 inet6 static
+#        address 2a02:ed06:3::1
+#        netmask 64
+#
+#
+## VLAN 10       haus
+auto eno2.10
+iface eno2.10 inet static
+        address 10.10.10.1
+        netmask 255.255.255.0
+        up vconfig set_flag eno2.10 1 1
+#
+
+
+
+auto eno2
+iface eno2 inet static
+     address 10.0.1.2
+     netmask 255.255.255.0
+#
+#
+# Routed interface towards hole-sw/internet.
+#auto eno1
+#iface eno1 inet static
+#        address 10.0.127.14
+#        netmask 255.255.255.252
+#        network 10.0.127.12
+#        post-up ip addr add 185.35.202.238/32 dev eno1
+#        post-up ip rout add default via 10.0.127.13
+#        # dns-* options are implemented by the resolvconf package, if installed
+#        dns-nameservers 8.8.8.8
+#        dns-search hackeriet.no
+# 
+#
+#iface eth3 inet6 static
+#        address 2a02:ed06:1000:1::2
+#        netmask 64
+#        post-up ip -6 route add default via 2a02:ed06:1000:1::1
+#(END)
+
