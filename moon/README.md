@@ -6,7 +6,7 @@ Some facts:
 * 2017-09-26: on this date we had to install a new router / gw for Hackeriet and Hausmania, as the previous one died.
 * It's a Debian stretch setup, using two network interfaces
 * We tried to keep the setup as simple as possible, we had enough of complicated and cutting edge setups that people don't understand and
-(obviously) don't dare even try to manage. KISS: "Keep It Simple Stupid".
+(obviously) don't dare even try to manage. KISS: "Keep It Simple Stupid". It's a blessing, a love meesage to you, my friend.
 
 ## What do i need to get a machine on her legs
 
