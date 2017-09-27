@@ -108,8 +108,10 @@ Subnets are in place, we have a DHCP, but we also need to forward traffic on the
 
 * These are a must have:
 
+```
 net.ipv4.ip_forward=1
 net.ipv6.conf.all.forwarding=1
+```
 
 Other lines from the default can be added, check the conifguration file, we don't need to discuss more of them here.
 Activate the edited sysctl.conf running "sysctl -p", these are now persistent, and will come up at reboot.
