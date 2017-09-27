@@ -11,7 +11,7 @@ Some facts:
 ## What do i need to get a machine on her legs
 
 One can do a lot of nifty work on a router / gateway, but what is the minimum i need to get one to function?
-Here is the stricly necessary stuff to make it work. Ensure these configurations are in place in the corresponding configuration files.
+Here is the strictly necessary stuff to make it work. Ensure these configurations are in place in the corresponding configuration files.
 
 ### /etc/network/interfaces
 
@@ -47,8 +47,8 @@ up vconfig set_flag eno2.3 1 1
 
 Observe as well:
 
-* The address reflects the geometry of the net, from the netmask we know is a /24,
-* the address itself is a .1 because this interface will be the gateway for that subnet,
+* The address reflects the geometry of the subnet, from the netmask we know is a /24
+* the address itself is a .1 because this interface will be the gateway for that subnet (daaah)
 * in the last line we add a vconfig command in order to trunk the traffic for this subnet
 through the spanning tree protocol. To explain it in an oversimplified way, we tell the switch
 downstream that we are sending traffic for a certain subnet over the same cable we use for
