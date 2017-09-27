@@ -135,3 +135,13 @@ Ensure that the following is in place:
 * fail2ban is installed and guards ssh from brute force attacks (because of course, you will turn password authentication back on at some point, DEV).
 * unattended-upgrades is installed ( if you have read all this document, i can't imagine seeing you keeping your machine security updated ).
 
+### More iptables rules?
+
+In the old days we had a more basic infrastructure, and we had much less bandwidth than we do today. We also had worse switches, and in some extent,
+worse people behind their client machines. The use of cable internet has dropped in the house, most people use some form of poor wireless access point.
+Access points per default have their own NAT and some additional client isolation, and glossy crap of course...
+Today some of the protection we implemented in the firewall rules is covered by the switches we use.
+However, for the record, in the old days we used an rc.firewall script that per default dropped all traffic, while allowing only the necessary traffic.
+We are now going to do the opposite, because we don't want to deviate from an installation that is minimal and easy to mantain.
+We will see if this is a good idea or not.
+
