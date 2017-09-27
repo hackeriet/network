@@ -136,7 +136,7 @@ iptables-save > /etc/iptables/rules.v4
 ```
 
 ..so that the rules are persistent, and come up again at reboot.
-Once you came all the way here, you have a functioning router gateway. Congrats. You have a clients.
+Once you came all the way here, you have a functioning router gateway. Congrats. You have clients.
 
 ## More stuff (but not strictly necessary)
 
