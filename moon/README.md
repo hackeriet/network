@@ -57,9 +57,9 @@ relative subnet or, to say it properly, is "tagged".
 
 #### Really? I am lost! Tell me more.
 
-DEVS! We have a switch downstream from the second interface, and we send traffic tagged with the different vlans.
-On the switch (that has to have the proper spanning tree protocol functionality) we receive the cable from the second interface of
-our gateway on a port in which we tag all the vlans. That means, we have to have:
+Developers! We have a switch downstream from the second interface, and we send traffic tagged with the different vlans.
+On the switch (that has to have the proper spanning tree protocol functionality) that receives the cable from the second interface of
+our gateway on a port in which we tag all the vlans. That means, in our setup we need to have:
 
 * An stp enabled switch
 * The corresponding vlans we defined in the interfaces file configured on the switch
@@ -69,7 +69,7 @@ our gateway on a port in which we tag all the vlans. That means, we have to have
 ..so we can distribute DHCP to the different ports according to the vlan they are assigned to.
 
 We could of course have used a machine with more ethernet ports, configured them as the first snippet,
-and just added some stupid switches downstream. Switches do so much more though than that though, like providing
+and just added some stupid switches downstream. Good switches do so much more though, like providing
 protection from different evil things your users will try doing at some point, or traffic shaping, and of course the setup
 using vlans can always provide all the vlans selectively on the ports of all the switches connected to your tree.
 Just by using a combination of "untagged" and "tagged" traffic.
@@ -79,7 +79,7 @@ As a rule of thumb:
 * tagged traffic is for switches with stp enabled
 * untagged traffic is for client hosts
 
-Now go do your homework.
+Now do your homework.
 
 ###  /etc/dnsmasq.conf
 
