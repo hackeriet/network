@@ -13,18 +13,17 @@ Some facts:
 One can do a lot of nifty work on a router / gateway, but what is the minimum i need to get one to function?
 Here is the stricly necessary stuff to make it work. Ensure these configurations are in place in the corresponding configuration files.
 
-### /etc/network/interface
+### /etc/network/interfaces
 
 Packages to install: vlan
 
 We have two interfaces, one is the uplink (eno1) and the other one (eno2) is connected to a switch trunking the necessary virtual lans.
-In order to do that, the "vlan" package has to be installed, and then some additional virtual lans can be added in order to create additional
+In order to trunk vlans to a switch, the "vlan" package has to be installed, and then virtual lans can be added in order to create additional
 subnet segments. This is useful in order to isolate different environments, for example the net where a lot of unexperienced and vicious freaks
-that cause havok per default in their life, from the one in which experienced vicious freaks try to avoid havok in their life. Or something like that.
-Let's cut the shit, you know what i mean.
+cause havok per default in their life, from the one in which experienced vicious freaks try to avoid havok in their life. Or something like that.
 
-So the uplink (eno1) is basically assigned a public ip, and should have a static ip configured in order to come up cleanly after a reboot. I won't use more
-details here, just look at the interface example.
+The uplink (eno1) is assigned a public ip, and has a static ip configured in order to come cleanly up after a reboot. I won't use more
+details here, just look at the interfaces file
 
 The downlink (eno2), will work as a gateway for all the subnets. I provide the two snippets that are necessary for the hackeriet subnet inline here.
 The first snippet is the physical eno2 interface, nothing interesting here, just a starting point to add vlans. Still necessary.
