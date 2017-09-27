@@ -10,13 +10,12 @@ UPLINK=eno1
 echo "Brace for $0 hackeriet shit"
 echo "Uplink $UPLINK"
 
-modprobe nf_nat_tftp
-
-iptables -F
-iptables -t mangle -F
-iptables -t nat -F
-
-modprobe ip_conntrack hashsize=4096
+## probably unnecessary
+## modprobe nf_nat_tftp
+## iptables -F
+## iptables -t mangle -F
+## iptables -t nat -F
+## modprobe ip_conntrack hashsize=4096
 
 # voxility romania, loads of udp shit trffic
 iptables -A FORWARD -s 93.115.84.198 -j DROP
@@ -57,8 +56,8 @@ iptables -A FORWARD -o $UPLINK -p udp --dport 137:138 -j REJECT
 # interne addresser skal ikke krysse eth0
 iptables -A FORWARD -o $UPLINK -d 10.10.0.0/255.255.0.0 -j REJECT
 iptables -A FORWARD -i $UPLINK -s 10.10.0.0/255.255.0.0 -j REJECT
-iptables -A FORWARD -o ppp0 -d 10.10.0.0/255.255.0.0 -j REJECT
-iptables -A FORWARD -i ppp0 -s 10.10.0.0/255.255.0.0 -j REJECT
+## iptables -A FORWARD -o ppp0 -d 10.10.0.0/255.255.0.0 -j REJECT
+## iptables -A FORWARD -i ppp0 -s 10.10.0.0/255.255.0.0 -j REJECT
 
 # stygg port
 iptables -A FORWARD -p udp --dport 666 -j DROP
