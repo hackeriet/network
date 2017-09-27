@@ -35,7 +35,15 @@ address 10.0.1.2
 netmask 255.255.255.0
 ```
 
-The second snippet adds a .3 to the interface eno2, because this is a virtual one.
+The second snippet adds a .3 to the interface eno2, because this is a virtual one, referring to the physical one.
+
+```
+auto eno2.3
+iface eno2.3 inet static
+address 10.10.3.1
+netmask 255.255.255.0
+up vconfig set_flag eno2.3 1 1
+```
 
 Observe as well:
 
@@ -46,14 +54,6 @@ through the spanning tree protocol. To explain it in an oversimplified way, we t
 downstream that we are sending traffic for a certain subnet over the same cable we use for
 other subnets, so traffic for the different subnets over the same cable is marked with the
 relative subnet or, to say it properly, is "tagged".
-
-```
-auto eno2.3
-iface eno2.3 inet static
-address 10.10.3.1
-netmask 255.255.255.0
-up vconfig set_flag eno2.3 1 1
-```
 
 #### Really? I am lost! Tell me more.
 
