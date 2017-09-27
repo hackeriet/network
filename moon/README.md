@@ -29,10 +29,12 @@ details here, just look at the interface example.
 The downlink (eno2), will work as a gateway for all the subnets. I provide the two snippets that are necessary for the hackeriet subnet inline here.
 The first snippet is the physical eno2 interface, nothing interesting here, just a starting point to add vlans. Still necessary.
 
+```
 auto eno2
 iface eno2 inet static
 address 10.0.1.2
 netmask 255.255.255.0
+```
 
 The second snippet adds a .3 to the interface eno2, because this is a virtual one.
 
@@ -46,11 +48,13 @@ downstream that we are sending traffic for a certain subnet over the same cable 
 other subnets, so traffic for the different subnets over the same cable is marked with the
 relative subnet or, to say it properly, is "tagged".
 
+```
 auto eno2.3
 iface eno2.3 inet static
 address 10.10.3.1
 netmask 255.255.255.0
 up vconfig set_flag eno2.3 1 1
+```
 
 #### Really? I am lost! Tell me more.
 
@@ -90,7 +94,9 @@ Check that dnsmasq is installed. Once that is done, you can use the dnsmasq.conf
 Note that the necessary lines for answering to DHCP on the matching vlans we added in /etc/network/interfaces
 look like this:
 
+```
 dhcp-range=hackeriet,10.10.3.50,10.10.3.250,255.255.255.0,6h
+```
 
 Where you have an ip range you use as a pool for DHCP, a netmask, and a TTL.
 Every vlan should have one of these.
@@ -115,12 +121,18 @@ Packages to install: iptables-persistent
 Last but not least, we need to reflect the previous step also in the firewall rules.
 We actually need only one, important line, and that looks like this:
 
+```
 iptables --table nat --append POSTROUTING -o eno1 -j MASQUERADE
+```
 
 We are fed up of having custom scripts laying around, so we do simply two things:
 
 * run the previous iptables command
-* iptables-save > /etc/iptables/rules.v4
+* run:
+
+```
+iptables-save > /etc/iptables/rules.v4
+```
 
 ..so that the rules are persistent, and come up again at reboot.
 Once you came all the way here, you have a functioning router gateway. Congrats. You have a clients.
