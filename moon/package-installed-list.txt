@@ -1,6 +1,3 @@
-### These are the packaged we installed to have a machine up
-
-
 Desired=Unknown/Install/Remove/Purge/Hold
 | Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend
 |/ Err?=(none)/Reinst-required (Status,Err: uppercase=bad)
@@ -58,6 +55,7 @@ ii  gnupg                         2.1.18-6                       amd64        GN
 ii  gnupg-agent                   2.1.18-6                       amd64        GNU privacy guard - cryptographic agent
 ii  gpgv                          2.1.18-6                       amd64        GNU privacy guard - signature verification tool
 ii  grep                          2.27-2                         amd64        GNU grep, egrep and fgrep
+ii  groff-base                    1.22.3-9                       amd64        GNU troff text-formatting system (base system components)
 ii  grub-common                   2.02~beta3-5                   amd64        GRand Unified Bootloader (common files)
 ii  grub-pc                       2.02~beta3-5                   amd64        GRand Unified Bootloader, version 2 (PC/BIOS version)
 ii  grub-pc-bin                   2.02~beta3-5                   amd64        GRand Unified Bootloader, version 2 (PC/BIOS binaries)
@@ -250,6 +248,7 @@ ii  login                         1:4.4-4.1                      amd64        sy
 ii  logrotate                     3.11.0-0.1                     amd64        Log rotation utility
 ii  lsb-base                      9.20161125                     all          Linux Standard Base init script functionality
 ii  lsb-release                   9.20161125                     all          Linux Standard Base version reporting utility
+ii  man-db                        2.7.6.1-2                      amd64        on-line manual pager
 ii  manpages                      4.10-2                         all          Manual pages about using a GNU/Linux system
 ii  mawk                          1.3.3-17+b3                    amd64        a pattern scanning and text processing language
 ii  mime-support                  3.60                           all          MIME files 'mime.types' & 'mailcap', and support programs
